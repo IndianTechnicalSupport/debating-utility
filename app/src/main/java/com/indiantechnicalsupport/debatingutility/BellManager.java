@@ -28,9 +28,9 @@ public class BellManager {
         // this.originalBellTimes.add(240000); // Bell 2 at 4 minutes
         // this.originalBellTimes.add(270000); // Bell 3 at 4 minutes 30 seconds
         
-        this.originalBellTimes.add(5000);
-        this.originalBellTimes.add(10000);
-        this.originalBellTimes.add(15000);
+        this.originalBellTimes.add(5000);  // Bell 1 at 5 seconds
+        this.originalBellTimes.add(10000); // Bell 2 at 10 seconds
+        this.originalBellTimes.add(15000); // Bell 3 at 15 seconds
 
         this.originalBellNumbers.add(1); // 1 bell  at first ring
         this.originalBellNumbers.add(2); // 2 bells at first ring
