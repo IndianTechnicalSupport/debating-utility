@@ -11,7 +11,6 @@ public class BellManager {
     private ArrayList<Integer> workingBellTimes;
     private ArrayList<Integer> workingBellNumbers;
 
-
     private boolean isPaused;
 
     private ScheduledThreadPoolExecutor bellThreadPool;
@@ -26,13 +25,15 @@ public class BellManager {
         this.originalBellTimes = new ArrayList<Integer>();
         this.originalBellNumbers = new ArrayList<Integer>();
 
-        this.originalBellTimes.add(120000);
-        this.originalBellTimes.add(240000);
-        this.originalBellTimes.add(270000);
+        // DUMMY VARIABLES FOR TESTING FUNCTIONALITY
 
-        this.originalBellNumbers.add(1);
-        this.originalBellNumbers.add(2);
-        this.originalBellNumbers.add(3);
+        this.originalBellTimes.add(120000); // Bell 1 at 2 minutes
+        this.originalBellTimes.add(240000); // Bell 2 at 4 minutes
+        this.originalBellTimes.add(270000); // Bell 3 at 4 minutes 30 seconds
+
+        this.originalBellNumbers.add(1); // 1 bell  at first ring
+        this.originalBellNumbers.add(2); // 2 bells at first ring
+        this.originalBellNumbers.add(3); // 3 bells at first ring
     }
 
     public void setOriginalBellTimes(ArrayList<Integer> bellTimes) {
@@ -106,6 +107,23 @@ public class BellManager {
         }
 
         // Cancelling remaining tasks for other bells
+        this.cancelBellTasks();
+
+        this.isPaused = true;
+    }
+
+    public void resetBells() {
+
+        if (!this.isPaused) { // Not previously paused, need to cancel scheduled bell ringing
+            this.cancelBellTasks();
+        }
+
+        // Change pause flag
+        this.isPaused = false;
+    }
+
+    public void cancelBellTasks() {
+        // Cancelling remaining bell-ringing tasks
         for (int j = 0; j < this.threadTasks.size(); j ++) {
             boolean successfulCancel = this.threadTasks.get(j).cancel(true);
 
@@ -115,61 +133,5 @@ public class BellManager {
         }
 
         this.bellThreadPool.shutdownNow();
-
-        this.isPaused = true;
-    }
-
-    public void resetBells() {
-        this.isPaused = false;
-
-        // Cancelling remaining tasks for other bells
-         for (int j = 0; j < this.threadTasks.size(); j ++) {
-            boolean successfulCancel = this.threadTasks.get(j).cancel(true);
-
-            if (!successfulCancel) {
-                System.out.println("Unable to cancel scheduled bell ringer!");
-            }
-        }
-
-        this.bellThreadPool.shutdownNow();
-    }
-
-    public void run() {
-
-
-
-        // ArrayList<Integer> activeBellTimes = this.bellTimes;
-        // ArrayList<Integer> activeBellNumber = this.bellNumbers;
-
-        // int timeGap = activeBellTimes.get(0);
-
-        // while (activeBellTimes.size() >= 1) {
-
-        //     for (int i = 0; i < timeGap; i ++) {
-        //         // try {
-        //         //     synchronized (this) {
-        //         //         wait(1000); // Wait 1 second
-        //         //     }
-        //         // } catch (InterruptedException e) {
-        //         //     // Do nothing
-        //         //     return;
-        //         // }
-        //     }
-
-        //     // Time elapsed, play bell sound
-        //     for (int j = 0; j < activeBellNumber.get(0); j ++) {
-        //         soundBellOnce();
-        //     }
-
-
-        //     // At end, set next time gap to be the difference between 0 and 1
-
-        //     if (activeBellTimes.size() == 1) {
-        //         break;
-        //     } else {
-        //         timeGap = activeBellTimes.get(1) - activeBellTimes.get(0);
-        //         activeBellTimes.remove(0);
-        //     }
-        // }
     }
 }
