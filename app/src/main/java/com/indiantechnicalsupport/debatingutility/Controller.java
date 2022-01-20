@@ -20,8 +20,9 @@ public class Controller {
     public Controller() {
         this.model = new Model(6, this); // Default is 6 speakers
         this.view = new View();
-        this.dedicatedButtonBellRinger = new BellRinger(1);
+        this.dedicatedButtonBellRinger = new BellRinger(1); // Button rings bell once
 
+        // Starting at first speaker. conditions set by default
         this.nextSpeakerAllowed = true;
         this.prevSpeakerAllowed = false;
     }
@@ -38,26 +39,21 @@ public class Controller {
         // Start Button
         this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().startStopwatch());
         this.view.getStartButton().addActionListener(e -> this.initStopwatchDisplay());
-        // this.view.getStartButton().addActionListener(e -> this.startBellFunctionality());
-        // this.view.getStartButton().addActionListener(e -> this.bellManager.prepareBells());
         this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().getBellManager().prepareBells());
-        this.view.getStartButton().addActionListener(e -> this.disableSpeakerControlButtons());
+        this.view.getStartButton().addActionListener(e -> this.toggleSpeakerControlButtons(false));
 
         // Stop Button
         this.view.getStopButton().addActionListener(e -> this.model.getStopwatch().stopStopwatch());
         this.view.getStopButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
-        // this.view.getStopButton().addActionListener(e -> this.pauseBellFunctionality());
-        // this.view.getStopButton().addActionListener(e -> this.bellManager.pauseBells(this.model.getStopwatch()));
         this.view.getStopButton().addActionListener(e -> this.model.getStopwatch().getBellManager().pauseBells(this.model.getStopwatch()));
-        this.view.getStopButton().addActionListener(e -> this.enableSpeakerControlButtons());
+        this.view.getStopButton().addActionListener(e -> this.toggleSpeakerControlButtons(true));
 
         // Reset Button
         this.view.getResetButton().addActionListener(e -> this.view.setElapsedTime(0, 0));
         this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().resetStopwatch());
         this.view.getResetButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
-        // this.view.getResetButton().addActionListener(e -> this.bellManager.resetBells());
         this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().getBellManager().resetBells());
-        this.view.getResetButton().addActionListener(e -> this.enableSpeakerControlButtons());
+        this.view.getResetButton().addActionListener(e -> this.toggleSpeakerControlButtons(true));
     }
 
     public void initStopwatchDisplay() {
@@ -75,9 +71,11 @@ public class Controller {
             }
         };
 
+        // Activate stopwatch display update
         this.stopwatchDisplayUpdate = new Timer(SECOND_UPDATE_DELAY, displayUpdate);
         this.stopwatchDisplayUpdate.start();
 
+        // Each time a new speaker is loaded, display updates on click
         this.getView().getNextSpeakerButton().addActionListener(displayUpdate);
         this.getView().getPrevSpeakerButton().addActionListener(displayUpdate);
     }
@@ -95,20 +93,17 @@ public class Controller {
         this.view.getPrevSpeakerButton().setEnabled(false); // Starts on first speaker by default
     }
 
-    public void enableSpeakerControlButtons() {
+    public void toggleSpeakerControlButtons(boolean permitted) {
         if (this.nextSpeakerAllowed) {
-            this.view.getNextSpeakerButton().setEnabled(true);
+            this.view.getNextSpeakerButton().setEnabled(permitted);
         }
 
         if (this.prevSpeakerAllowed) {
-            this.view.getPrevSpeakerButton().setEnabled(true);
+            this.view.getPrevSpeakerButton().setEnabled(permitted);
         }
     }
 
-    public void disableSpeakerControlButtons() {
-        this.view.getNextSpeakerButton().setEnabled(false);
-        this.view.getPrevSpeakerButton().setEnabled(false);
-    }
+    // Getter/Setter Functions
 
     public Model getModel() {
         return this.model;
