@@ -7,11 +7,8 @@ public class BellManager {
 
     private ArrayList<Integer> originalBellTimes;
     private ArrayList<Integer> originalBellNumbers;
-    
     private ArrayList<Integer> workingBellTimes;
     private ArrayList<Integer> workingBellNumbers;
-
-    private boolean isPaused;
 
     private ScheduledThreadPoolExecutor bellThreadPool;
     private ArrayList<ScheduledFuture<?>> threadTasks;
@@ -27,9 +24,13 @@ public class BellManager {
 
         // DUMMY VARIABLES FOR TESTING FUNCTIONALITY
 
-        this.originalBellTimes.add(120000); // Bell 1 at 2 minutes
-        this.originalBellTimes.add(240000); // Bell 2 at 4 minutes
-        this.originalBellTimes.add(270000); // Bell 3 at 4 minutes 30 seconds
+        // this.originalBellTimes.add(120000); // Bell 1 at 2 minutes
+        // this.originalBellTimes.add(240000); // Bell 2 at 4 minutes
+        // this.originalBellTimes.add(270000); // Bell 3 at 4 minutes 30 seconds
+        
+        this.originalBellTimes.add(5000);
+        this.originalBellTimes.add(10000);
+        this.originalBellTimes.add(15000);
 
         this.originalBellNumbers.add(1); // 1 bell  at first ring
         this.originalBellNumbers.add(2); // 2 bells at first ring
@@ -41,85 +42,52 @@ public class BellManager {
     }
 
     public void prepareBells() {
+        
         // Add tasks to threadpool in the form of bell ringers
-
-        System.out.println("Bells scheduled");
-
         this.bellThreadPool = new ScheduledThreadPoolExecutor(3);
         this.threadTasks = new ArrayList<ScheduledFuture<?>>();
 
-        if (isPaused) { // previously paused, use working times instead
-            System.out.println(" using working times");
-            for (int i = 0; i < this.workingBellNumbers.size(); i ++) {
-                System.out.println(this.workingBellNumbers.get(i) + " " + this.workingBellTimes.get(i));
-                ScheduledFuture<?> task = this.bellThreadPool.schedule(new BellRinger(this.workingBellNumbers.get(i)), this.workingBellTimes.get(i), TimeUnit.MILLISECONDS);
-                this.threadTasks.add(task);
-            }
-        } else {
-            for (int i = 0; i < this.originalBellNumbers.size(); i ++) {
-                ScheduledFuture<?> task = this.bellThreadPool.schedule(new BellRinger(this.originalBellNumbers.get(i)), this.originalBellTimes.get(i), TimeUnit.MILLISECONDS);
-                this.threadTasks.add(task);
-            }
+        for (int i = 0; i < this.workingBellNumbers.size(); i ++) {
+            ScheduledFuture<?> task = this.bellThreadPool.schedule(new BellRinger(this.workingBellNumbers.get(i)), this.workingBellTimes.get(i), TimeUnit.MILLISECONDS);
+            this.threadTasks.add(task);
         }
+
     }
 
     public void pauseBells(Model.Stopwatch activeStopwatch) {
         long elapsed = activeStopwatch.getElapsed();
 
-        System.out.println("\nPause bells\n");
-
         ArrayList<Integer> updatedBellTimes = new ArrayList<Integer>();
         ArrayList<Integer> updatedBellNumbers = new ArrayList<Integer>();
 
         // Calculating new times for remaining bells
-        if (isPaused) {
-            for (int i = 0; i < this.workingBellNumbers.size(); i ++) {
-                System.out.println(elapsed + " : " + this.workingBellTimes.get(i));
+        for (int i = 0; i < this.originalBellTimes.size(); i ++) {
+            if (this.originalBellTimes.get(i) < elapsed) {
+                continue;
+            } else {
+                System.out.println("Bell paused and readded at:" + (Integer) (int) (this.originalBellTimes.get(i) - elapsed));
 
-                if (this.originalBellTimes.get(i) < elapsed) {
-                    System.out.println("Bell not added.");
-                    continue;
-                } else {
-                    System.out.println("Bell added with " + (this.workingBellTimes.get(i) - elapsed) + " time remaining");
-                    updatedBellTimes.add((Integer) (int) (this.workingBellTimes.get(i) - elapsed));
-                    updatedBellNumbers.add(workingBellNumbers.get(i));
-                }
+                updatedBellTimes.add((Integer) (int) (this.originalBellTimes.get(i) - elapsed));
+                updatedBellNumbers.add(originalBellNumbers.get(i));
             }
-
-            this.workingBellNumbers = updatedBellNumbers;
-            this.workingBellTimes = updatedBellTimes;
-        } else {
-            for (int i = 0; i < this.originalBellNumbers.size(); i ++) {
-                System.out.println(elapsed + " : " + this.originalBellTimes.get(i));
-
-                if (this.originalBellTimes.get(i) < elapsed) {
-                    System.out.println("Bell not added.");
-                    continue;
-                } else {
-                    System.out.println("Bell added with " + (this.originalBellTimes.get(i) - elapsed) + " time remaining");
-                    updatedBellTimes.add((Integer) (int) (this.originalBellTimes.get(i) - elapsed));
-                    updatedBellNumbers.add(originalBellNumbers.get(i));
-                }
-            }
-
-            this.workingBellNumbers = updatedBellNumbers;
-            this.workingBellTimes = updatedBellTimes;
         }
+
+        this.workingBellNumbers = updatedBellNumbers;
+        this.workingBellTimes = updatedBellTimes;
 
         // Cancelling remaining tasks for other bells
         this.cancelBellTasks();
-
-        this.isPaused = true;
     }
 
     public void resetBells() {
 
-        if (!this.isPaused) { // Not previously paused, need to cancel scheduled bell ringing
+        if (!(this.bellThreadPool.isShutdown())) { // Not previously shutdown, need to cancel scheduled bell ringing
             this.cancelBellTasks();
         }
 
-        // Change pause flag
-        this.isPaused = false;
+        // Reset working bell times and number of rings
+        this.workingBellTimes = this.originalBellNumbers;
+        this.workingBellNumbers = this.originalBellNumbers;
     }
 
     public void cancelBellTasks() {
