@@ -65,8 +65,6 @@ public class BellManager {
             if (this.originalBellTimes.get(i) < elapsed) {
                 continue;
             } else {
-                System.out.println("Bell paused and readded at:" + (Integer) (int) (this.originalBellTimes.get(i) - elapsed));
-
                 updatedBellTimes.add((Integer) (int) (this.originalBellTimes.get(i) - elapsed));
                 updatedBellNumbers.add(originalBellNumbers.get(i));
             }
