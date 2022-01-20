@@ -7,10 +7,16 @@ public class Model {
     private Stopwatch stopwatch;
     private ArrayList<Stopwatch> stopwatchList;
 
-    private boolean stopwatchIsRunning;
-
-    public Model() {
+    public Model(int stopwatchNumber) {
         this.stopwatch = new Stopwatch();
+
+        this.stopwatchList = new ArrayList<Stopwatch>();
+
+        for (int i = 0; i < stopwatchNumber; i ++) {
+            this.stopwatchList.add(new Stopwatch());
+        }
+
+        // this.stopwatch = this.stopwatchList.get(0);
     }
 
     public Stopwatch getStopwatch() {
@@ -21,9 +27,13 @@ public class Model {
         private long milliStart;
         private long milliEnd;
 
+        private BellManager stopwatchBellManager;
+
         protected Stopwatch() {
             this.milliStart = 0;
             this.milliEnd = 0;
+
+            this.stopwatchBellManager = new BellManager();
         }
 
         public void startStopwatch() {
@@ -69,6 +79,10 @@ public class Model {
 
         public long getEnd() {
             return this.milliEnd;
+        }
+
+        public BellManager getBellManager() {
+            return this.stopwatchBellManager;
         }
     }
 }

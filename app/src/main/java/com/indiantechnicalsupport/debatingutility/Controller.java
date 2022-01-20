@@ -3,8 +3,6 @@ package com.indiantechnicalsupport.debatingutility;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.ArrayList;
-
 import javax.swing.Timer;
 
 public class Controller {
@@ -13,44 +11,50 @@ public class Controller {
     private View view;
 
     private Timer stopwatchDisplayUpdate;
-    private ArrayList<Timer> stopwatchBellUpdate;
 
-    private BellManager bellManager;
-    private BellRinger buttonBell;
+    private BellRinger dedicatedButtonBellRinger;
 
     public Controller() {
-        this.model = new Model();
+        this.model = new Model(6); // Default is 6 speakers
         this.view = new View();
-        this.bellManager = new BellManager();
-        this.buttonBell = new BellRinger(1);
+        this.dedicatedButtonBellRinger = new BellRinger(1);
     }
 
     public void initialise() {
+        this.initStopwatchDisplay();
         this.initStartStopFunctionality();
         this.initBellControlsFunctionality();
+        this.initSpeakerControlsFunctionality();
     }
 
     public void initStartStopFunctionality() {
-
-        this.initStopwatchDisplay();
 
         // Start Button
         this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().startStopwatch());
         this.view.getStartButton().addActionListener(e -> this.initStopwatchDisplay());
         // this.view.getStartButton().addActionListener(e -> this.startBellFunctionality());
-        this.view.getStartButton().addActionListener(e -> this.bellManager.prepareBells());
+        // this.view.getStartButton().addActionListener(e -> this.bellManager.prepareBells());
+        this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().getBellManager().prepareBells());
+        this.view.getStartButton().addActionListener(e -> this.view.getNextSpeakerButton().setEnabled(false));
+        this.view.getStartButton().addActionListener(e -> this.view.getPrevSpeakerButton().setEnabled(false));
 
         // Stop Button
         this.view.getStopButton().addActionListener(e -> this.model.getStopwatch().stopStopwatch());
         this.view.getStopButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
         // this.view.getStopButton().addActionListener(e -> this.pauseBellFunctionality());
-        this.view.getStopButton().addActionListener(e -> this.bellManager.pauseBells(this.model.getStopwatch()));
+        // this.view.getStopButton().addActionListener(e -> this.bellManager.pauseBells(this.model.getStopwatch()));
+        this.view.getStopButton().addActionListener(e -> this.model.getStopwatch().getBellManager().pauseBells(this.model.getStopwatch()));
+        this.view.getStopButton().addActionListener(e -> this.view.getNextSpeakerButton().setEnabled(true));
+        this.view.getStopButton().addActionListener(e -> this.view.getPrevSpeakerButton().setEnabled(true));
 
         // Reset Button
         this.view.getResetButton().addActionListener(e -> this.view.setElapsedTime(0, 0));
         this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().resetStopwatch());
         this.view.getResetButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
-        this.view.getResetButton().addActionListener(e -> this.bellManager.resetBells());
+        // this.view.getResetButton().addActionListener(e -> this.bellManager.resetBells());
+        this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().getBellManager().resetBells());
+        this.view.getResetButton().addActionListener(e -> this.view.getNextSpeakerButton().setEnabled(true));
+        this.view.getResetButton().addActionListener(e -> this.view.getPrevSpeakerButton().setEnabled(true));
     }
 
     public void initStopwatchDisplay() {
@@ -72,28 +76,16 @@ public class Controller {
         this.stopwatchDisplayUpdate.start();
     }
 
-    // public void startBellFunctionality() {
-    //     synchronized (this.bellThread) {
-    //         if (this.bellThread.isAlive()) {
-    //             this.bellThread.notifyAll();
-    //         } else {
-    //             this.bellThread.start();
-    //         }
-    //     }
-    // }
-
-    // public void pauseBellFunctionality() {
-    //     synchronized (this.bellThread) {
-    //         try {
-    //             this.bellThread.wait();
-    //         } catch (InterruptedException e) {
-    
-    //         }
-    //     }
-    // }
-
     public void initBellControlsFunctionality() {
-        this.view.getDingButton().addActionListener(e -> this.buttonBell.soundBellOnce());
+        this.view.getDingButton().addActionListener(e -> this.dedicatedButtonBellRinger.soundBellOnce());
+    }
+
+    public void initSpeakerControlsFunctionality() {
+        // Next Speaker Button
+
+
+        // Previous Speaker Button
+        
     }
 
     public Model getModel() {

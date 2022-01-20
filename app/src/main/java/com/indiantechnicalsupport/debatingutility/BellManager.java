@@ -32,9 +32,13 @@ public class BellManager {
         this.originalBellTimes.add(10000); // Bell 2 at 10 seconds
         this.originalBellTimes.add(15000); // Bell 3 at 15 seconds
 
+        this.workingBellTimes = this.originalBellTimes;
+
         this.originalBellNumbers.add(1); // 1 bell  at first ring
         this.originalBellNumbers.add(2); // 2 bells at first ring
         this.originalBellNumbers.add(3); // 3 bells at first ring
+
+        this.workingBellNumbers = this.originalBellNumbers;
     }
 
     public void setOriginalBellTimes(ArrayList<Integer> bellTimes) {
@@ -47,6 +51,7 @@ public class BellManager {
         this.bellThreadPool = new ScheduledThreadPoolExecutor(3);
         this.threadTasks = new ArrayList<ScheduledFuture<?>>();
 
+        // Iterate over bells to be scheduled, add to thread pool as scheduled future tasks
         for (int i = 0; i < this.workingBellNumbers.size(); i ++) {
             ScheduledFuture<?> task = this.bellThreadPool.schedule(new BellRinger(this.workingBellNumbers.get(i)), this.workingBellTimes.get(i), TimeUnit.MILLISECONDS);
             this.threadTasks.add(task);
@@ -62,14 +67,15 @@ public class BellManager {
 
         // Calculating new times for remaining bells
         for (int i = 0; i < this.originalBellTimes.size(); i ++) {
-            if (this.originalBellTimes.get(i) < elapsed) {
+            if (this.originalBellTimes.get(i) < elapsed) { // Bell has already rung
                 continue;
-            } else {
+            } else { // Add bell back into list to be scheduled, with remaining time shortened
                 updatedBellTimes.add((Integer) (int) (this.originalBellTimes.get(i) - elapsed));
                 updatedBellNumbers.add(originalBellNumbers.get(i));
             }
         }
 
+        // Update working bells array list
         this.workingBellNumbers = updatedBellNumbers;
         this.workingBellTimes = updatedBellTimes;
 
@@ -84,7 +90,7 @@ public class BellManager {
         }
 
         // Reset working bell times and number of rings
-        this.workingBellTimes = this.originalBellNumbers;
+        this.workingBellTimes = this.originalBellTimes;
         this.workingBellNumbers = this.originalBellNumbers;
     }
 
@@ -98,6 +104,7 @@ public class BellManager {
             }
         }
 
+        // All tasks cancelled, shutdown thread pool
         this.bellThreadPool.shutdownNow();
     }
 }

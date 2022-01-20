@@ -236,6 +236,14 @@ public class View extends JFrame {
         return this.bellPlaySound;
     }
 
+    public JButton getNextSpeakerButton() {
+        return this.nextSpeaker;
+    }
+
+    public JButton getPrevSpeakerButton() {
+        return this.prevSpeaker;
+    }
+
     public void setElapsedTime(int minutes, int seconds) {
         String display = String.format("%d:%02d", minutes, seconds);
         this.elapsedTime.setText(display);
