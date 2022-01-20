@@ -4,11 +4,13 @@ import java.util.ArrayList;
 
 public class Model {
 
-    private Stopwatch stopwatch;
+    private Stopwatch currentStopwatch;
     private ArrayList<Stopwatch> stopwatchList;
 
-    public Model(int stopwatchNumber) {
-        this.stopwatch = new Stopwatch();
+    private Controller controller;
+
+    public Model(int stopwatchNumber, Controller controller) {
+        // this.stopwatch = new Stopwatch();
 
         this.stopwatchList = new ArrayList<Stopwatch>();
 
@@ -16,11 +18,43 @@ public class Model {
             this.stopwatchList.add(new Stopwatch());
         }
 
-        // this.stopwatch = this.stopwatchList.get(0);
+        this.currentStopwatch = this.stopwatchList.get(0);
+
+        this.controller = controller;
     }
 
     public Stopwatch getStopwatch() {
-        return this.stopwatch;
+        return this.currentStopwatch;
+    }
+
+    public void nextSpeaker() {
+        // Check if next speaker will be last in list
+        if (this.stopwatchList.indexOf(this.currentStopwatch) == this.stopwatchList.size() - 2) {
+            this.controller.setNextSpeakerAllowed(false);
+            this.controller.getView().getNextSpeakerButton().setEnabled(false);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == 0) {
+            // Speaker is first in list, remove restrictions
+            this.controller.setPrevSpeakerAllowed(true);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
+            // Error case
+        }
+
+        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) + 1);
+    }
+
+    public void prevSpeaker() {
+        // Check if prev speaker will be first in list
+        if (this.stopwatchList.indexOf(this.currentStopwatch) == 1) {
+            this.controller.setPrevSpeakerAllowed(false);
+            this.controller.getView().getPrevSpeakerButton().setEnabled(false);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == this.stopwatchList.size() - 1) {
+            // Speaker is last in list, remove restrictions
+            this.controller.setNextSpeakerAllowed(true);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
+            // Error case
+        }
+            
+        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) - 1);
     }
 
     protected class Stopwatch {
