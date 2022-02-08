@@ -96,7 +96,7 @@ public class View extends JFrame {
         this.timerPanel = new JPanel(new GridBagLayout());
 
         /*
-        ADD TIMEKEEPING CONTROLS 
+        ADD TIMEKEEPING AND BELL CONTROLS 
         */
 
         // Create JPanel for timekeeping controls
@@ -117,15 +117,17 @@ public class View extends JFrame {
         this.reset = new JButton("Reset");
         this.timerControls.add(this.reset);
 
+        this.bellPlaySound = new JButton("Ding!");
+        this.timerControls.add(this.bellPlaySound);
+
         // Add layout constraints
         GridBagConstraints timerControlsConstraints = new GridBagConstraints();
-        // Position row 0, column 0.
+        // Position row 3, column 0.
         timerControlsConstraints.gridx = 0;
-        timerControlsConstraints.gridy = 0;
+        timerControlsConstraints.gridy = 3;
         timerControlsConstraints.fill = GridBagConstraints.BOTH;
         timerControlsConstraints.insets = new Insets(10, 10, 10, 10);
-        timerControlsConstraints.weightx = 0.5;
-        timerControlsConstraints.weighty = 0.5;
+        timerControlsConstraints.weighty = 0.3;
         
         /*
         ADD SPEAKER CONTROLS
@@ -137,44 +139,49 @@ public class View extends JFrame {
         this.speakerControls.setBorder(BorderFactory.createTitledBorder("Speakers"));        
 
         // Add buttons and dynamic text
-        this.nextSpeaker = new JButton("Next Speaker");
-        this.speakerControls.add(this.nextSpeaker);
 
         this.prevSpeaker = new JButton("Prev Speaker");
         this.speakerControls.add(this.prevSpeaker);
 
+        this.speakerText = new JLabel("P/Hlder");
+        this.speakerText.setHorizontalAlignment(JLabel.CENTER);
+        this.speakerControls.add(this.speakerText);
+
+        this.nextSpeaker = new JButton("Next Speaker");
+        this.speakerControls.add(this.nextSpeaker);
+
         // Add layout constraints
         GridBagConstraints speakerControlsConstraints = new GridBagConstraints();
-        // Position row 1, column 0.
+        // Position row 0, column 0.
         speakerControlsConstraints.gridx = 0;
-        speakerControlsConstraints.gridy = 1;
+        speakerControlsConstraints.gridy = 0;
         speakerControlsConstraints.fill = GridBagConstraints.BOTH;
         speakerControlsConstraints.insets = new Insets(10, 10, 10, 10);
-        speakerControlsConstraints.weighty = 0.5;
+        speakerControlsConstraints.weighty = 0.3;
 
-        /*
-        ADD BELL CONTROLS
-        */
+        // /*
+        // ADD BELL CONTROLS
+        // */
 
-        // Create JPanel for bell controls
-        this.bellControls = new JPanel();
-        this.bellControls.setLayout(new GridLayout());
-        this.bellControls.setBorder(BorderFactory.createTitledBorder("Bells"));        
+        // // Create JPanel for bell controls
+        // this.bellControls = new JPanel();
+        // this.bellControls.setLayout(new GridLayout());
+        // this.bellControls.setBorder(BorderFactory.createTitledBorder("Bells"));        
 
-        // Add buttons and dynamic text
-        this.bellPlaySound = new JButton("Ding!");
-        this.bellControls.add(this.bellPlaySound);
+        // // Add buttons and dynamic text
+        // this.bellPlaySound = new JButton("Ding!");
+        // this.bellControls.add(this.bellPlaySound);
 
-        this.bellSettings = new JButton("Settings");
-        this.bellControls.add(this.bellSettings);
+        // this.bellSettings = new JButton("Settings");
+        // this.bellControls.add(this.bellSettings);
 
-        // Add layout constraints
-        GridBagConstraints bellControlsConstraints = new GridBagConstraints();
-        // Position row 2, column 0.
-        bellControlsConstraints.gridx = 0;
-        bellControlsConstraints.gridy = 2;
-        bellControlsConstraints.fill = GridBagConstraints.BOTH;
-        bellControlsConstraints.insets = new Insets(10, 10, 10, 10);
+        // // Add layout constraints
+        // GridBagConstraints bellControlsConstraints = new GridBagConstraints();
+        // // Position row 2, column 0.
+        // bellControlsConstraints.gridx = 0;
+        // bellControlsConstraints.gridy = 2;
+        // bellControlsConstraints.fill = GridBagConstraints.BOTH;
+        // bellControlsConstraints.insets = new Insets(10, 10, 10, 10);
 
         /*
         ADD TIMER DISPLAY
@@ -191,26 +198,26 @@ public class View extends JFrame {
 
         // Add Constraints for layout
         GridBagConstraints timerDisplayConstraints = new GridBagConstraints();
-        // Position row 0, column 1.
-        timerDisplayConstraints.gridx = 1;
-        timerDisplayConstraints.gridy = 0; 
+        // Position row 1, column 0.
+        timerDisplayConstraints.gridx = 0;
+        timerDisplayConstraints.gridy = 1; 
         timerDisplayConstraints.fill = GridBagConstraints.BOTH;
         timerDisplayConstraints.gridheight = 2; // spans two rows
-        timerDisplayConstraints.weightx = 0.7;
+        timerDisplayConstraints.weightx = 1.0;
         timerDisplayConstraints.weighty = 1.0;
 
-        /*
-        ADD BELL/SPEAKER INFO DISPLAY
-        */
-        this.bellText = new JLabel("1 bell at 2 minutes, 2 bells at 4 minutes, cutoff at 4 minutes 30 seconds");
-        this.speakerText = new JLabel("Yeah Speakers");
+        // /*
+        // ADD BELL/SPEAKER INFO DISPLAY
+        // */
+        // this.bellText = new JLabel("1 bell at 2 minutes, 2 bells at 4 minutes, cutoff at 4 minutes 30 seconds");
+        // this.speakerText = new JLabel("Yeah Speakers");
 
-        // Add Constraints for layout
-        GridBagConstraints bellTextDisplayConstraints = new GridBagConstraints();
-        // Position row 0, column 1.
-        bellTextDisplayConstraints.gridx = 1;
-        bellTextDisplayConstraints.gridy = 2; 
-        bellTextDisplayConstraints.fill = GridBagConstraints.BOTH;
+        // // Add Constraints for layout
+        // GridBagConstraints bellTextDisplayConstraints = new GridBagConstraints();
+        // // Position row 0, column 1.
+        // bellTextDisplayConstraints.gridx = 1;
+        // bellTextDisplayConstraints.gridy = 2; 
+        // bellTextDisplayConstraints.fill = GridBagConstraints.BOTH;
 
 
 
@@ -218,8 +225,8 @@ public class View extends JFrame {
         this.timerPanel.add(this.timerControls, timerControlsConstraints);
         this.timerPanel.add(this.timerDisplay, timerDisplayConstraints);
         this.timerPanel.add(this.speakerControls, speakerControlsConstraints);
-        this.timerPanel.add(this.bellControls, bellControlsConstraints);
-        this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
+        // this.timerPanel.add(this.bellControls, bellControlsConstraints);
+        // this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
     }
 
     public void initGUISettingsElements() {
