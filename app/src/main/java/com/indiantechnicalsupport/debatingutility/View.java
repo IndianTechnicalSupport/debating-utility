@@ -47,6 +47,9 @@ public class View extends JFrame {
     private JButton bellPlaySound;
     private JButton bellSettings;
 
+    // Settings Elements
+    private JPanel settingsPanel;
+
 
     public View() {
 
@@ -76,13 +79,12 @@ public class View extends JFrame {
 
         // Setup panel elements
         this.initGUITimerElements();
+        this.initGUISettingsElements();
 
         // Add panels to tab
-        this.tabPane.addTab("Timekeeping", tabIcon, this.timerPanel);
-
-        JPanel settings = new JPanel();
-        this.tabPane.addTab("Settings", tabIcon, settings,
-                "Adjust settings, including the speaker configurations.");
+        this.tabPane.addTab("Timekeeping", tabIcon, this.timerPanel, "Stopwatch and bell functions.");
+        this.tabPane.addTab("Settings", tabIcon, this.settingsPanel,
+                "Adjust settings, including the speaker and bell configurations.");
 
     }
 
@@ -218,6 +220,10 @@ public class View extends JFrame {
         this.timerPanel.add(this.speakerControls, speakerControlsConstraints);
         this.timerPanel.add(this.bellControls, bellControlsConstraints);
         this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
+    }
+
+    public void initGUISettingsElements() {
+        this.settingsPanel = new JPanel(new GridBagLayout());
     }
 
     public JButton getStartButton() {
