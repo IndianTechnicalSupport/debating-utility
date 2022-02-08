@@ -14,9 +14,6 @@ public class Model {
         this.stopwatchList = new ArrayList<Stopwatch>();
 
         for (int i = 0; i < stopwatchNumber; i ++) {
-
-            View dummyView2 = view;
-
             this.stopwatchList.add(new Stopwatch(view));
         }
 
@@ -67,8 +64,6 @@ public class Model {
         protected Stopwatch(View view) {
             this.milliStart = 0;
             this.milliEnd = 0;
-
-            View dummyView = view;
 
             this.stopwatchBellManager = new BellManager(view);
         }

@@ -71,9 +71,6 @@ public class BellManager {
 
         // Iterate over bells to be scheduled, add to thread pool as scheduled future tasks
         for (int i = 0; i < this.workingBellNumbers.size(); i ++) {
-            JPanel dummy = this.view.getTimerDisplay();
-
-
             ScheduledFuture<?> bellTask = this.bellThreadPool.schedule(new BellRinger(this.workingBellNumbers.get(i)), this.workingBellTimes.get(i), TimeUnit.MILLISECONDS);
             ScheduledFuture<?> screenTask = this.bellThreadPool.schedule(new ScreenColourChanger(this.workingBellColours.get(i), this.view.getTimerDisplay()), this.workingBellTimes.get(i), TimeUnit.MILLISECONDS);
             this.threadTasks.add(bellTask);
