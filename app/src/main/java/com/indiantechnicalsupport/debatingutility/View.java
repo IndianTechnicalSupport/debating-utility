@@ -231,6 +231,22 @@ public class View extends JFrame {
         return this.prevSpeaker;
     }
 
+    public JLabel getBellText() {
+        return this.bellText;
+    }
+
+    public JLabel getSpeakerText() {
+        return this.speakerText;
+    }
+
+    public void setBellText(String bellString) {
+        this.bellText.setText(bellString);
+    }
+
+    public void setSpeakerText(String speakerString) {
+        this.speakerText.setText(speakerString);
+    }
+
     public void setElapsedTime(int minutes, int seconds) {
         String display = String.format("%d:%02d", minutes, seconds);
         this.elapsedTime.setText(display);
