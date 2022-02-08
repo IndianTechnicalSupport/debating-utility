@@ -1,11 +1,12 @@
 package com.indiantechnicalsupport.debatingutility;
 
 import java.awt.BorderLayout;
-import java.awt.Insets;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Font;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -14,8 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import com.indiantechnicalsupport.debatingutility.Model.Stopwatch;
 
 public class View extends JFrame {
 
@@ -72,7 +71,8 @@ public class View extends JFrame {
 
         // Setup tabbed pane
         this.tabPane = new JTabbedPane();
-        ImageIcon tabIcon = new ImageIcon("./app/src/main/resources/timerTabIcon.png");
+        ImageIcon tabIcon = new ImageIcon();
+        // ImageIcon tabIcon = new ImageIcon("./app/src/main/resources/timerTabIcon.png");
 
         // Setup panel elements
         this.initGUITimerElements();
@@ -239,6 +239,10 @@ public class View extends JFrame {
         return this.speakerText;
     }
 
+    public JPanel getTimerDisplay() {
+        return this.timerDisplay;
+    }
+
     public void setBellText(String bellString) {
         this.bellText.setText(bellString);
     }
@@ -252,8 +256,7 @@ public class View extends JFrame {
         this.elapsedTime.setText(display);
     }
 
-    public void setTimerOnUpdate(String speaker, Stopwatch stopwatch) {
-        // Change speaker heading and update timer to correct one, whether stored or not
-
+    public void setStopwatchBackground(Color color) {
+        this.timerDisplay.setBackground(color);
     }
 }

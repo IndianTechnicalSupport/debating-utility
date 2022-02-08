@@ -3,6 +3,7 @@ package com.indiantechnicalsupport.debatingutility;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.Timer;
 
 public class Controller {
@@ -18,8 +19,8 @@ public class Controller {
     private boolean prevSpeakerAllowed;
 
     public Controller() {
-        this.model = new Model(6, this); // Default is 6 speakers
         this.view = new View();
+        this.model = new Model(6, this, this.view); // Default is 6 speakers
         this.dedicatedButtonBellRinger = new BellRinger(1); // Button rings bell once
 
         // Starting at first speaker. conditions set by default
@@ -54,6 +55,7 @@ public class Controller {
         this.view.getResetButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
         this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().getBellManager().resetBells());
         this.view.getResetButton().addActionListener(e -> this.toggleSpeakerControlButtons(true));
+        this.view.getResetButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
     }
 
     public void initStopwatchDisplay() {
@@ -87,9 +89,13 @@ public class Controller {
     public void initSpeakerControlsFunctionality() {
         // Next Speaker Button
         this.view.getNextSpeakerButton().addActionListener(e -> this.model.nextSpeaker());
+        // Temp fix for colour changing
+        this.view.getNextSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
 
         // Previous Speaker Button
         this.view.getPrevSpeakerButton().addActionListener(e -> this.model.prevSpeaker());
+        // Temp fix for colour changing
+        this.view.getPrevSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
         this.view.getPrevSpeakerButton().setEnabled(false); // Starts on first speaker by default
     }
 

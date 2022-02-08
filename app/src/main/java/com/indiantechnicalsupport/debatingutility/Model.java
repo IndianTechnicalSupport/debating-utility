@@ -9,18 +9,19 @@ public class Model {
 
     private Controller controller;
 
-    public Model(int stopwatchNumber, Controller controller) {
+    public Model(int stopwatchNumber, Controller controller, View view) {
         // this.stopwatch = new Stopwatch();
-
         this.stopwatchList = new ArrayList<Stopwatch>();
 
         for (int i = 0; i < stopwatchNumber; i ++) {
-            this.stopwatchList.add(new Stopwatch());
+
+            View dummyView2 = view;
+
+            this.stopwatchList.add(new Stopwatch(view));
         }
 
-        this.currentStopwatch = this.stopwatchList.get(0);
-
         this.controller = controller;
+        this.currentStopwatch = this.stopwatchList.get(0);
     }
 
     public Stopwatch getStopwatch() {
@@ -63,11 +64,13 @@ public class Model {
 
         private BellManager stopwatchBellManager;
 
-        protected Stopwatch() {
+        protected Stopwatch(View view) {
             this.milliStart = 0;
             this.milliEnd = 0;
 
-            this.stopwatchBellManager = new BellManager();
+            View dummyView = view;
+
+            this.stopwatchBellManager = new BellManager(view);
         }
 
         public void startStopwatch() {
