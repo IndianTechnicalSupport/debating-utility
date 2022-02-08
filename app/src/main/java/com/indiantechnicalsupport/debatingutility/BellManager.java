@@ -5,8 +5,6 @@ import java.util.concurrent.*;
 
 import java.awt.Color;
 
-import javax.swing.JPanel;
-
 public class BellManager {
 
     private View view;
