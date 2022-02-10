@@ -273,13 +273,11 @@ public class View extends JFrame {
                 formattedTime = currentBellMinutes + ":" + currentBellSeconds;
             }
 
-            System.out.println("Formatted time is: " + formattedTime);
-
             field.setText(formattedTime);
             field.setValue(formattedTime);
 
             this.settingsBells.add(field);
-
+            
             this.settingsBellsTextFieldArrayList.add(field);
         }
     }
@@ -326,8 +324,6 @@ public class View extends JFrame {
 
     public ArrayList<Integer> getSettingsBellsTimes() {
         ArrayList<Integer> bellTimes = new ArrayList<Integer>();
-
-        System.out.println("Bell Times array list size is: " + this.settingsBellsTextFieldArrayList.size());
 
         for (int i = 0; i < this.settingsBellsTextFieldArrayList.size(); i ++) {
             String input = (String) this.settingsBellsTextFieldArrayList.get(i).getValue();

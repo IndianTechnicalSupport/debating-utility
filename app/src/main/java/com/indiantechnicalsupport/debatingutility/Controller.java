@@ -147,21 +147,11 @@ public class Controller {
 
     private void updateBellTimes() {
         if (this.getView().getTabbedPane().getSelectedComponent().getName().equals("Settings")) { // Selected Settings, load text box
-            System.out.println("Settings Selected");
             ArrayList<Integer> bellTimes = this.getModel().getStopwatch().getBellManager().getOriginalBellTimes();
-
-            System.out.println("Bell Times debug: " + bellTimes.size());
-
             this.view.redrawSettingsBellTimeElements(bellTimes);
         } else { // Selected Timekeeping, need to update bell times
-            System.out.println("Timekeeping Selected");
             ArrayList<Stopwatch> stopwatches = this.getModel().getStopwatchList();
-
             ArrayList<Integer> updatedBellTimes = this.getView().getSettingsBellsTimes();
-
-            for (int i = 0; i < updatedBellTimes.size(); i ++) {
-                System.out.println(updatedBellTimes.get(i));
-            }
 
             for (int i = 0; i < stopwatches.size(); i ++) {
                 stopwatches.get(i).getBellManager().setOriginalBellTimes(updatedBellTimes);
