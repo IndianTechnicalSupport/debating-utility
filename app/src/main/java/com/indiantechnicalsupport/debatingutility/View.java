@@ -8,13 +8,19 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import java.util.ArrayList;
+
+import java.text.ParseException;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.text.MaskFormatter;
 
 public class View extends JFrame {
 
@@ -45,6 +51,9 @@ public class View extends JFrame {
 
     // Settings Elements
     private JPanel settingsPanel;
+
+    private JPanel settingsBells;
+    private ArrayList<JFormattedTextField> settingsBellsTextFieldArrayList;
 
 
     public View() {
@@ -91,6 +100,7 @@ public class View extends JFrame {
 
         // Create overall JPanel for organising all components
         this.timerPanel = new JPanel(new GridBagLayout());
+        this.timerPanel.setName("Timekeeping");
 
         /*
         ADD TIMEKEEPING AND BELL CONTROLS 
@@ -204,7 +214,74 @@ public class View extends JFrame {
     }
 
     public void initGUISettingsElements() {
+        // Create overall JPanel for organising all components
         this.settingsPanel = new JPanel(new GridBagLayout());
+        this.settingsPanel.setName("Settings");
+
+        /*
+        ADD EDITABLE BELL TIME FIELDS
+        */
+
+        // Create JPanel for timekeeping controls
+        this.settingsBells = new JPanel();
+        this.settingsBells.setLayout(new GridLayout());
+        this.settingsBells.setBorder(BorderFactory.createTitledBorder("Bell Times"));        
+
+        // Add buttons and dynamic text
+
+        int bellNumber = 3;
+
+        this.settingsBellsTextFieldArrayList = new ArrayList<JFormattedTextField>();
+
+        for (int i = 0; i < bellNumber; i ++) {
+            this.settingsBellsTextFieldArrayList.add(new JFormattedTextField(createTimeFormatter("#:##")));
+            this.settingsBells.add(this.settingsBellsTextFieldArrayList.get(i));
+        }
+
+        // Add layout constraints
+        GridBagConstraints settingsBellsConstraints = new GridBagConstraints();
+        // Position row 0, column 0.
+        settingsBellsConstraints.gridx = 0;
+        settingsBellsConstraints.gridy = 0;
+        settingsBellsConstraints.fill = GridBagConstraints.BOTH;
+        settingsBellsConstraints.insets = new Insets(10, 10, 10, 10);
+        settingsBellsConstraints.weighty = 0.3;
+
+        // Add sub-panels to parent settings panel
+        this.settingsPanel.add(this.settingsBells);
+    }
+
+    public void redrawSettingsBellTimeElements(ArrayList<Integer> bellTimes) {
+        this.settingsBellsTextFieldArrayList = new ArrayList<JFormattedTextField>();
+
+        this.settingsBells.removeAll(); // Clear JPanel, redraw components
+
+        for (int i = 0; i < bellTimes.size(); i ++) {
+            JFormattedTextField field = new JFormattedTextField(createTimeFormatter("#:##"));
+
+            Integer currentBellTime = bellTimes.get(i);
+            currentBellTime = currentBellTime / 1000;
+            
+            Integer currentBellMinutes = currentBellTime / 60; // SHOULD FLOOR DIVIDE HOPEFULLY
+            Integer currentBellSeconds = currentBellTime - (currentBellMinutes * 60);
+
+            String formattedTime = "";
+
+            if (currentBellSeconds < 10) { // Less than 10 seconds, need auxiliary 0
+                formattedTime = currentBellMinutes + ":0" + currentBellSeconds;
+            } else {
+                formattedTime = currentBellMinutes + ":" + currentBellSeconds;
+            }
+
+            System.out.println("Formatted time is: " + formattedTime);
+
+            field.setText(formattedTime);
+            field.setValue(formattedTime);
+
+            this.settingsBells.add(field);
+
+            this.settingsBellsTextFieldArrayList.add(field);
+        }
     }
 
     public JButton getStartButton() {
@@ -243,6 +320,31 @@ public class View extends JFrame {
         return this.timerDisplay;
     }
 
+    public JTabbedPane getTabbedPane() {
+        return this.tabPane;
+    }
+
+    public ArrayList<Integer> getSettingsBellsTimes() {
+        ArrayList<Integer> bellTimes = new ArrayList<Integer>();
+
+        System.out.println("Bell Times array list size is: " + this.settingsBellsTextFieldArrayList.size());
+
+        for (int i = 0; i < this.settingsBellsTextFieldArrayList.size(); i ++) {
+            String input = (String) this.settingsBellsTextFieldArrayList.get(i).getValue();
+
+            String[] splitInput = input.split(":");
+
+            Integer minutes = Integer.parseInt(splitInput[0]);
+            Integer seconds = Integer.parseInt(splitInput[1]);
+
+            Integer calculatedBellTime = (minutes * 60 + seconds) * 1000; // Calculated in milliseconds
+
+            bellTimes.add(calculatedBellTime);
+        }
+        
+        return bellTimes;
+    }
+
     public void setBellText(String bellString) {
         this.bellText.setText(bellString);
     }
@@ -258,5 +360,19 @@ public class View extends JFrame {
 
     public void setStopwatchBackground(Color color) {
         this.timerDisplay.setBackground(color);
+    }
+
+    protected MaskFormatter createTimeFormatter(String string) {
+
+        MaskFormatter formatter = null;
+
+        try {
+            formatter = new MaskFormatter(string);
+        } catch (ParseException e) {
+            System.err.println("formatter is bad: " + e.getMessage());
+            System.exit(-1);
+        }
+
+        return formatter;
     }
 }

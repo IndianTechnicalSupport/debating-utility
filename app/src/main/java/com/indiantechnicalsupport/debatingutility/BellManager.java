@@ -56,9 +56,14 @@ public class BellManager {
 
         this.workingBellColours = this.originalBellColours;
     }
+    
+    public ArrayList<Integer> getOriginalBellTimes() {
+        return this.originalBellTimes;
+    }
 
     public void setOriginalBellTimes(ArrayList<Integer> bellTimes) {
         this.originalBellTimes = bellTimes;
+        this.workingBellTimes = this.originalBellTimes;
     }
 
     public void prepareBells() {

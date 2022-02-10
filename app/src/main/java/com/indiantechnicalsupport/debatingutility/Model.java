@@ -25,6 +25,10 @@ public class Model {
         return this.currentStopwatch;
     }
 
+    public ArrayList<Stopwatch> getStopwatchList() {
+        return this.stopwatchList;
+    }
+
     public void nextSpeaker() {
         // Check if next speaker will be last in list
         if (this.stopwatchList.indexOf(this.currentStopwatch) == this.stopwatchList.size() - 2) {

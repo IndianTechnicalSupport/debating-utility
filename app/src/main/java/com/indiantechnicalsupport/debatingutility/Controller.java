@@ -3,8 +3,14 @@ package com.indiantechnicalsupport.debatingutility;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import java.util.ArrayList;
+
 import javax.swing.JButton;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import com.indiantechnicalsupport.debatingutility.Model.Stopwatch;
 
 public class Controller {
 
@@ -33,6 +39,7 @@ public class Controller {
         this.initStartStopFunctionality();
         this.initBellControlsFunctionality();
         this.initSpeakerControlsFunctionality();
+        this.initSettingsFunctionality();
     }
 
     public void initStartStopFunctionality() {
@@ -109,6 +116,15 @@ public class Controller {
         }
     }
 
+    public void initSettingsFunctionality() {
+        // Settings Tab
+        this.view.getTabbedPane().addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                updateBellTimes();
+            }
+        });
+    }
+
     // Getter/Setter Functions
 
     public Model getModel() {
@@ -127,5 +143,29 @@ public class Controller {
     public void setPrevSpeakerAllowed(boolean allowed) {
         this.prevSpeakerAllowed = allowed;
         this.getView().getPrevSpeakerButton().setEnabled(true);
+    }
+
+    private void updateBellTimes() {
+        if (this.getView().getTabbedPane().getSelectedComponent().getName().equals("Settings")) { // Selected Settings, load text box
+            System.out.println("Settings Selected");
+            ArrayList<Integer> bellTimes = this.getModel().getStopwatch().getBellManager().getOriginalBellTimes();
+
+            System.out.println("Bell Times debug: " + bellTimes.size());
+
+            this.view.redrawSettingsBellTimeElements(bellTimes);
+        } else { // Selected Timekeeping, need to update bell times
+            System.out.println("Timekeeping Selected");
+            ArrayList<Stopwatch> stopwatches = this.getModel().getStopwatchList();
+
+            ArrayList<Integer> updatedBellTimes = this.getView().getSettingsBellsTimes();
+
+            for (int i = 0; i < updatedBellTimes.size(); i ++) {
+                System.out.println(updatedBellTimes.get(i));
+            }
+
+            for (int i = 0; i < stopwatches.size(); i ++) {
+                stopwatches.get(i).getBellManager().setOriginalBellTimes(updatedBellTimes);
+            }
+        }
     }
 }
