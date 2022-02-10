@@ -4,26 +4,72 @@ import java.util.ArrayList;
 
 public class Model {
 
-    private Stopwatch stopwatch;
+    private Stopwatch currentStopwatch;
     private ArrayList<Stopwatch> stopwatchList;
 
-    private boolean stopwatchIsRunning;
+    private Controller controller;
 
-    public Model() {
-        this.stopwatch = new Stopwatch();
+    public Model(int stopwatchNumber, Controller controller, View view) {
+        // this.stopwatch = new Stopwatch();
+        this.stopwatchList = new ArrayList<Stopwatch>();
+
+        for (int i = 0; i < stopwatchNumber; i ++) {
+            this.stopwatchList.add(new Stopwatch(view));
+        }
+
+        this.controller = controller;
+        this.currentStopwatch = this.stopwatchList.get(0);
     }
 
     public Stopwatch getStopwatch() {
-        return this.stopwatch;
+        return this.currentStopwatch;
+    }
+
+    public ArrayList<Stopwatch> getStopwatchList() {
+        return this.stopwatchList;
+    }
+
+    public void nextSpeaker() {
+        // Check if next speaker will be last in list
+        if (this.stopwatchList.indexOf(this.currentStopwatch) == this.stopwatchList.size() - 2) {
+            this.controller.setNextSpeakerAllowed(false);
+            this.controller.getView().getNextSpeakerButton().setEnabled(false);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == 0) {
+            // Speaker is first in list, remove restrictions
+            this.controller.setPrevSpeakerAllowed(true);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
+            // Error case
+        }
+
+        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) + 1);
+    }
+
+    public void prevSpeaker() {
+        // Check if prev speaker will be first in list
+        if (this.stopwatchList.indexOf(this.currentStopwatch) == 1) {
+            this.controller.setPrevSpeakerAllowed(false);
+            this.controller.getView().getPrevSpeakerButton().setEnabled(false);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == this.stopwatchList.size() - 1) {
+            // Speaker is last in list, remove restrictions
+            this.controller.setNextSpeakerAllowed(true);
+        } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
+            // Error case
+        }
+            
+        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) - 1);
     }
 
     protected class Stopwatch {
         private long milliStart;
         private long milliEnd;
 
-        protected Stopwatch() {
+        private BellManager stopwatchBellManager;
+
+        protected Stopwatch(View view) {
             this.milliStart = 0;
             this.milliEnd = 0;
+
+            this.stopwatchBellManager = new BellManager(view);
         }
 
         public void startStopwatch() {
@@ -69,6 +115,10 @@ public class Model {
 
         public long getEnd() {
             return this.milliEnd;
+        }
+
+        public BellManager getBellManager() {
+            return this.stopwatchBellManager;
         }
     }
 }

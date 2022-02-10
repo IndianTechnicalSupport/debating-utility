@@ -1,21 +1,26 @@
 package com.indiantechnicalsupport.debatingutility;
 
 import java.awt.BorderLayout;
-import java.awt.Insets;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
-import java.awt.Font;
+import java.awt.Insets;
+
+import java.util.ArrayList;
+
+import java.text.ParseException;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import com.indiantechnicalsupport.debatingutility.Model.Stopwatch;
+import javax.swing.text.MaskFormatter;
 
 public class View extends JFrame {
 
@@ -32,20 +37,23 @@ public class View extends JFrame {
     private JButton start;
     private JButton stop;
     private JButton reset;
+    private JButton bellPlaySound;
 
     private JPanel timerDisplay;
     private JLabel elapsedTime;
 
-    private JLabel speakerText;
     private JLabel bellText;
 
     private JPanel speakerControls;
-    private JButton nextSpeaker;
     private JButton prevSpeaker;
+    private JLabel speakerText;
+    private JButton nextSpeaker;
 
-    private JPanel bellControls;
-    private JButton bellPlaySound;
-    private JButton bellSettings;
+    // Settings Elements
+    private JPanel settingsPanel;
+
+    private JPanel settingsBells;
+    private ArrayList<JFormattedTextField> settingsBellsTextFieldArrayList;
 
 
     public View() {
@@ -72,17 +80,17 @@ public class View extends JFrame {
 
         // Setup tabbed pane
         this.tabPane = new JTabbedPane();
-        ImageIcon tabIcon = new ImageIcon("./app/src/main/resources/timerTabIcon.png");
+        ImageIcon tabIcon = new ImageIcon();
+        // ImageIcon tabIcon = new ImageIcon("./app/src/main/resources/timerTabIcon.png");
 
         // Setup panel elements
         this.initGUITimerElements();
+        this.initGUISettingsElements();
 
         // Add panels to tab
-        this.tabPane.addTab("Timekeeping", tabIcon, this.timerPanel);
-
-        JPanel settings = new JPanel();
-        this.tabPane.addTab("Settings", tabIcon, settings,
-                "Adjust settings, including the speaker configurations.");
+        this.tabPane.addTab("Timekeeping", tabIcon, this.timerPanel, "Stopwatch and bell functions.");
+        this.tabPane.addTab("Settings", tabIcon, this.settingsPanel,
+                "Adjust settings, including the speaker and bell configurations.");
 
     }
 
@@ -92,9 +100,10 @@ public class View extends JFrame {
 
         // Create overall JPanel for organising all components
         this.timerPanel = new JPanel(new GridBagLayout());
+        this.timerPanel.setName("Timekeeping");
 
         /*
-        ADD TIMEKEEPING CONTROLS 
+        ADD TIMEKEEPING AND BELL CONTROLS 
         */
 
         // Create JPanel for timekeeping controls
@@ -115,15 +124,17 @@ public class View extends JFrame {
         this.reset = new JButton("Reset");
         this.timerControls.add(this.reset);
 
+        this.bellPlaySound = new JButton("Ding!");
+        this.timerControls.add(this.bellPlaySound);
+
         // Add layout constraints
         GridBagConstraints timerControlsConstraints = new GridBagConstraints();
-        // Position row 0, column 0.
+        // Position row 4, column 0.
         timerControlsConstraints.gridx = 0;
-        timerControlsConstraints.gridy = 0;
+        timerControlsConstraints.gridy = 4;
         timerControlsConstraints.fill = GridBagConstraints.BOTH;
         timerControlsConstraints.insets = new Insets(10, 10, 10, 10);
-        timerControlsConstraints.weightx = 0.5;
-        timerControlsConstraints.weighty = 0.5;
+        timerControlsConstraints.weighty = 0.3;
         
         /*
         ADD SPEAKER CONTROLS
@@ -135,44 +146,25 @@ public class View extends JFrame {
         this.speakerControls.setBorder(BorderFactory.createTitledBorder("Speakers"));        
 
         // Add buttons and dynamic text
-        this.nextSpeaker = new JButton("Next Speaker");
-        this.speakerControls.add(this.nextSpeaker);
 
         this.prevSpeaker = new JButton("Prev Speaker");
         this.speakerControls.add(this.prevSpeaker);
 
+        this.speakerText = new JLabel("P/Hlder");
+        this.speakerText.setHorizontalAlignment(JLabel.CENTER);
+        this.speakerControls.add(this.speakerText);
+
+        this.nextSpeaker = new JButton("Next Speaker");
+        this.speakerControls.add(this.nextSpeaker);
+
         // Add layout constraints
         GridBagConstraints speakerControlsConstraints = new GridBagConstraints();
-        // Position row 1, column 0.
+        // Position row 0, column 0.
         speakerControlsConstraints.gridx = 0;
-        speakerControlsConstraints.gridy = 1;
+        speakerControlsConstraints.gridy = 0;
         speakerControlsConstraints.fill = GridBagConstraints.BOTH;
         speakerControlsConstraints.insets = new Insets(10, 10, 10, 10);
-        speakerControlsConstraints.weighty = 0.5;
-
-        /*
-        ADD BELL CONTROLS
-        */
-
-        // Create JPanel for bell controls
-        this.bellControls = new JPanel();
-        this.bellControls.setLayout(new GridLayout());
-        this.bellControls.setBorder(BorderFactory.createTitledBorder("Bells"));        
-
-        // Add buttons and dynamic text
-        this.bellPlaySound = new JButton("Ding!");
-        this.bellControls.add(this.bellPlaySound);
-
-        this.bellSettings = new JButton("Settings");
-        this.bellControls.add(this.bellSettings);
-
-        // Add layout constraints
-        GridBagConstraints bellControlsConstraints = new GridBagConstraints();
-        // Position row 2, column 0.
-        bellControlsConstraints.gridx = 0;
-        bellControlsConstraints.gridy = 2;
-        bellControlsConstraints.fill = GridBagConstraints.BOTH;
-        bellControlsConstraints.insets = new Insets(10, 10, 10, 10);
+        speakerControlsConstraints.weighty = 0.3;
 
         /*
         ADD TIMER DISPLAY
@@ -189,25 +181,27 @@ public class View extends JFrame {
 
         // Add Constraints for layout
         GridBagConstraints timerDisplayConstraints = new GridBagConstraints();
-        // Position row 0, column 1.
-        timerDisplayConstraints.gridx = 1;
-        timerDisplayConstraints.gridy = 0; 
+        // Position row 1, column 0.
+        timerDisplayConstraints.gridx = 0;
+        timerDisplayConstraints.gridy = 1; 
         timerDisplayConstraints.fill = GridBagConstraints.BOTH;
         timerDisplayConstraints.gridheight = 2; // spans two rows
-        timerDisplayConstraints.weightx = 0.7;
+        timerDisplayConstraints.weightx = 1.0;
         timerDisplayConstraints.weighty = 1.0;
 
         /*
         ADD BELL/SPEAKER INFO DISPLAY
         */
-        this.bellText = new JLabel("1 bell at 2 minutes, 2 bells at 4 minutes, cutoff at 4 minutes 30 seconds");
-        this.speakerText = new JLabel("Yeah Speakers");
+        
+        // Add labels
+        this.bellText = new JLabel("Bell Timing Placeholder");
+        this.bellText.setHorizontalAlignment(JLabel.CENTER);
 
         // Add Constraints for layout
         GridBagConstraints bellTextDisplayConstraints = new GridBagConstraints();
-        // Position row 0, column 1.
-        bellTextDisplayConstraints.gridx = 1;
-        bellTextDisplayConstraints.gridy = 2; 
+        // Position row 3, column 0.
+        bellTextDisplayConstraints.gridx = 0;
+        bellTextDisplayConstraints.gridy = 3; 
         bellTextDisplayConstraints.fill = GridBagConstraints.BOTH;
 
 
@@ -216,8 +210,76 @@ public class View extends JFrame {
         this.timerPanel.add(this.timerControls, timerControlsConstraints);
         this.timerPanel.add(this.timerDisplay, timerDisplayConstraints);
         this.timerPanel.add(this.speakerControls, speakerControlsConstraints);
-        this.timerPanel.add(this.bellControls, bellControlsConstraints);
         this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
+    }
+
+    public void initGUISettingsElements() {
+        // Create overall JPanel for organising all components
+        this.settingsPanel = new JPanel(new GridBagLayout());
+        this.settingsPanel.setName("Settings");
+
+        /*
+        ADD EDITABLE BELL TIME FIELDS
+        */
+
+        // Create JPanel for timekeeping controls
+        this.settingsBells = new JPanel();
+        this.settingsBells.setLayout(new GridLayout());
+        this.settingsBells.setBorder(BorderFactory.createTitledBorder("Bell Times"));        
+
+        // Add buttons and dynamic text
+
+        int bellNumber = 3;
+
+        this.settingsBellsTextFieldArrayList = new ArrayList<JFormattedTextField>();
+
+        for (int i = 0; i < bellNumber; i ++) {
+            this.settingsBellsTextFieldArrayList.add(new JFormattedTextField(createTimeFormatter("#:##")));
+            this.settingsBells.add(this.settingsBellsTextFieldArrayList.get(i));
+        }
+
+        // Add layout constraints
+        GridBagConstraints settingsBellsConstraints = new GridBagConstraints();
+        // Position row 0, column 0.
+        settingsBellsConstraints.gridx = 0;
+        settingsBellsConstraints.gridy = 0;
+        settingsBellsConstraints.fill = GridBagConstraints.BOTH;
+        settingsBellsConstraints.insets = new Insets(10, 10, 10, 10);
+        settingsBellsConstraints.weighty = 0.3;
+
+        // Add sub-panels to parent settings panel
+        this.settingsPanel.add(this.settingsBells);
+    }
+
+    public void redrawSettingsBellTimeElements(ArrayList<Integer> bellTimes) {
+        this.settingsBellsTextFieldArrayList = new ArrayList<JFormattedTextField>();
+
+        this.settingsBells.removeAll(); // Clear JPanel, redraw components
+
+        for (int i = 0; i < bellTimes.size(); i ++) {
+            JFormattedTextField field = new JFormattedTextField(createTimeFormatter("#:##"));
+
+            Integer currentBellTime = bellTimes.get(i);
+            currentBellTime = currentBellTime / 1000;
+            
+            Integer currentBellMinutes = currentBellTime / 60; // SHOULD FLOOR DIVIDE HOPEFULLY
+            Integer currentBellSeconds = currentBellTime - (currentBellMinutes * 60);
+
+            String formattedTime = "";
+
+            if (currentBellSeconds < 10) { // Less than 10 seconds, need auxiliary 0
+                formattedTime = currentBellMinutes + ":0" + currentBellSeconds;
+            } else {
+                formattedTime = currentBellMinutes + ":" + currentBellSeconds;
+            }
+
+            field.setText(formattedTime);
+            field.setValue(formattedTime);
+
+            this.settingsBells.add(field);
+            
+            this.settingsBellsTextFieldArrayList.add(field);
+        }
     }
 
     public JButton getStartButton() {
@@ -236,13 +298,77 @@ public class View extends JFrame {
         return this.bellPlaySound;
     }
 
+    public JButton getNextSpeakerButton() {
+        return this.nextSpeaker;
+    }
+
+    public JButton getPrevSpeakerButton() {
+        return this.prevSpeaker;
+    }
+
+    public JLabel getBellText() {
+        return this.bellText;
+    }
+
+    public JLabel getSpeakerText() {
+        return this.speakerText;
+    }
+
+    public JPanel getTimerDisplay() {
+        return this.timerDisplay;
+    }
+
+    public JTabbedPane getTabbedPane() {
+        return this.tabPane;
+    }
+
+    public ArrayList<Integer> getSettingsBellsTimes() {
+        ArrayList<Integer> bellTimes = new ArrayList<Integer>();
+
+        for (int i = 0; i < this.settingsBellsTextFieldArrayList.size(); i ++) {
+            String input = (String) this.settingsBellsTextFieldArrayList.get(i).getValue();
+
+            String[] splitInput = input.split(":");
+
+            Integer minutes = Integer.parseInt(splitInput[0]);
+            Integer seconds = Integer.parseInt(splitInput[1]);
+
+            Integer calculatedBellTime = (minutes * 60 + seconds) * 1000; // Calculated in milliseconds
+
+            bellTimes.add(calculatedBellTime);
+        }
+        
+        return bellTimes;
+    }
+
+    public void setBellText(String bellString) {
+        this.bellText.setText(bellString);
+    }
+
+    public void setSpeakerText(String speakerString) {
+        this.speakerText.setText(speakerString);
+    }
+
     public void setElapsedTime(int minutes, int seconds) {
         String display = String.format("%d:%02d", minutes, seconds);
         this.elapsedTime.setText(display);
     }
 
-    public void setTimerOnUpdate(String speaker, Stopwatch stopwatch) {
-        // Change speaker heading and update timer to correct one, whether stored or not
+    public void setStopwatchBackground(Color color) {
+        this.timerDisplay.setBackground(color);
+    }
 
+    protected MaskFormatter createTimeFormatter(String string) {
+
+        MaskFormatter formatter = null;
+
+        try {
+            formatter = new MaskFormatter(string);
+        } catch (ParseException e) {
+            System.err.println("formatter is bad: " + e.getMessage());
+            System.exit(-1);
+        }
+
+        return formatter;
     }
 }
