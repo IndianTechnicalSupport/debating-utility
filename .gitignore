@@ -9,3 +9,4 @@ app/bin
 
 *.jar
 *.class
+*.json
