@@ -45,8 +45,8 @@ public class BellManager {
         this.workingBellTimes = this.originalBellTimes;
 
         this.originalBellNumbers.add(1); // 1 bell  at first ring
-        this.originalBellNumbers.add(2); // 2 bells at first ring
-        this.originalBellNumbers.add(3); // 3 bells at first ring
+        this.originalBellNumbers.add(2); // 2 bells at second ring
+        this.originalBellNumbers.add(3); // 3 bells at third ring
 
         this.workingBellNumbers = this.originalBellNumbers;
 

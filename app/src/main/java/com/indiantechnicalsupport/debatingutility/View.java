@@ -42,6 +42,7 @@ public class View extends JFrame {
     private JPanel timerDisplay;
     private JLabel elapsedTime;
 
+    private String bellString;
     private JLabel bellText;
 
     private JPanel speakerControls;
@@ -194,8 +195,9 @@ public class View extends JFrame {
         */
         
         // Add labels
-        this.bellText = new JLabel("Bell Timing Placeholder");
+        this.bellText = new JLabel(this.getBellString());
         this.bellText.setHorizontalAlignment(JLabel.CENTER);
+        this.setBellText("1 bell at 0:05, 2 bells at 0:10, 3 bells at 0:15"); // Default timings
 
         // Add Constraints for layout
         GridBagConstraints bellTextDisplayConstraints = new GridBagConstraints();
@@ -341,6 +343,10 @@ public class View extends JFrame {
         return bellTimes;
     }
 
+    public String getBellString() {
+        return this.bellString;
+    }
+
     public void setBellText(String bellString) {
         this.bellText.setText(bellString);
     }
@@ -356,6 +362,36 @@ public class View extends JFrame {
 
     public void setStopwatchBackground(Color color) {
         this.timerDisplay.setBackground(color);
+    }
+
+    public void updateBellString(ArrayList<Integer> bellIntegerList) {
+        this.bellString = "";
+
+        for (int i = 0; i < bellIntegerList.size(); i ++) {
+            Integer milliTime = bellIntegerList.get(i);
+            System.out.println(milliTime);
+
+            Integer minutes = (milliTime / 60000);
+            System.out.println(minutes);
+            Integer seconds = (milliTime % 60000) / 1000; 
+            System.out.println(seconds);
+
+            String bellStringFragment = "";
+
+            if (i == 0) { // First pass, 1 bell
+                bellStringFragment += "1 bell at ";
+            } else {
+                bellStringFragment += (i + 1) + " bells at ";
+            }
+
+            bellStringFragment += String.format("%d:%02d", minutes, seconds);
+
+            if (i + 1 != bellIntegerList.size()) { // Not last pass
+                bellStringFragment += ", ";
+            }
+
+            this.bellString += bellStringFragment;
+        }
     }
 
     protected MaskFormatter createTimeFormatter(String string) {

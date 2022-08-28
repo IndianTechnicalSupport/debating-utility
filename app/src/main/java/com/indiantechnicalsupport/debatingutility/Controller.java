@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
 
-import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -26,7 +26,7 @@ public class Controller {
 
     public Controller() {
         this.view = new View();
-        this.model = new Model(6, this, this.view); // Default is 6 speakers
+        this.model = new Model(8, this, this.view); // Default is 8 speakers
         this.dedicatedButtonBellRinger = new BellRinger(1); // Button rings bell once
 
         // Starting at first speaker. conditions set by default
@@ -62,7 +62,7 @@ public class Controller {
         this.view.getResetButton().addActionListener(e -> this.stopwatchDisplayUpdate.stop());
         this.view.getResetButton().addActionListener(e -> this.model.getStopwatch().getBellManager().resetBells());
         this.view.getResetButton().addActionListener(e -> this.toggleSpeakerControlButtons(true));
-        this.view.getResetButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
+        this.view.getResetButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JPanel().getBackground()));
     }
 
     public void initStopwatchDisplay() {
@@ -97,12 +97,12 @@ public class Controller {
         // Next Speaker Button
         this.view.getNextSpeakerButton().addActionListener(e -> this.model.nextSpeaker());
         // Temp fix for colour changing
-        this.view.getNextSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
+        this.view.getNextSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JPanel().getBackground()));
 
         // Previous Speaker Button
         this.view.getPrevSpeakerButton().addActionListener(e -> this.model.prevSpeaker());
         // Temp fix for colour changing
-        this.view.getPrevSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JButton().getBackground()));
+        this.view.getPrevSpeakerButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JPanel().getBackground()));
         this.view.getPrevSpeakerButton().setEnabled(false); // Starts on first speaker by default
     }
 
@@ -156,6 +156,9 @@ public class Controller {
             for (int i = 0; i < stopwatches.size(); i ++) {
                 stopwatches.get(i).getBellManager().setOriginalBellTimes(updatedBellTimes);
             }
+
+            this.view.updateBellString(updatedBellTimes);
+            this.view.setBellText(this.view.getBellString());
         }
     }
 }
