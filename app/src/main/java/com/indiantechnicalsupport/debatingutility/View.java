@@ -386,7 +386,7 @@ public class View extends JFrame {
 
             bellStringFragment += String.format("%d:%02d", minutes, seconds);
 
-            if (i + 1 != bellIntegerList.size()) { // Not last pass
+            if (i + 1 != bellIntegerList.size()) { // Not last pass, add comma to string
                 bellStringFragment += ", ";
             }
 
