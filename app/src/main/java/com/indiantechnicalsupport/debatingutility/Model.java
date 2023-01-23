@@ -6,8 +6,6 @@ public class Model {
 
     private Stopwatch currentStopwatch;
     private ArrayList<Stopwatch> stopwatchList;
-    private ArrayList<String> speakerTitleArrayList;
-    private ArrayList<String> speakerNameArrayList;
 
     private Controller controller;
 
@@ -21,9 +19,6 @@ public class Model {
 
         this.controller = controller;
         this.currentStopwatch = this.stopwatchList.get(0);
-
-        this.speakerTitleArrayList = this.controller.getView().getSpeakerTitles();
-        this.speakerNameArrayList = this.controller.getView().getSpeakerNames();
     }
 
     public Stopwatch getStopwatch() {
@@ -35,7 +30,7 @@ public class Model {
     }
 
     public void generateCogitoSummary() {
-        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.speakerNameArrayList, this.getStopwatchList(), 0, new int[]{2, 3});
+        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.controller.getView().getSpeakerNames(), this.getStopwatchList(), 0, new int[]{2, 3});
         this.controller.getView().setSummaryText(summaryString);
     }
 
@@ -55,7 +50,7 @@ public class Model {
 
         this.currentStopwatch = this.stopwatchList.get(nextIndex);
         
-        this.controller.getView().updateSpeakerString(this.speakerTitleArrayList.get(nextIndex), this.speakerNameArrayList.get(nextIndex));;
+        this.controller.getView().updateSpeakerString(this.controller.getView().getSpeakerTitles().get(nextIndex), this.controller.getView().getSpeakerNames().get(nextIndex));
     }
 
     public void prevSpeaker() {
@@ -74,7 +69,7 @@ public class Model {
             
         this.currentStopwatch = this.stopwatchList.get(prevIndex);
 
-        this.controller.getView().updateSpeakerString(this.speakerTitleArrayList.get(prevIndex), this.speakerNameArrayList.get(prevIndex));
+        this.controller.getView().updateSpeakerString(this.controller.getView().getSpeakerTitles().get(prevIndex), this.controller.getView().getSpeakerNames().get(prevIndex));
     }
 
     protected class Stopwatch {

@@ -124,7 +124,7 @@ public class Controller {
         // Settings Tab
         this.view.getTabbedPane().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                updateBellTimes();
+                updateTabbedItems();
             }
         });
 
@@ -160,7 +160,7 @@ public class Controller {
         this.getView().getPrevSpeakerButton().setEnabled(true);
     }
 
-    private void updateBellTimes() {
+    private void updateTabbedItems() {
         if (this.getView().getTabbedPane().getSelectedComponent().getName().equals("Settings")) { // Selected Settings, load text box
             ArrayList<Integer> bellTimes = this.getModel().getStopwatch().getBellManager().getOriginalBellTimes();
             this.view.redrawSettingsBellTimeElements(bellTimes);
@@ -174,6 +174,10 @@ public class Controller {
 
             this.view.updateBellString(updatedBellTimes);
             this.view.setBellText(this.view.getBellString());
+
+
+            int nextIndex = this.model.getStopwatchList().indexOf(this.model.getStopwatch());
+            this.getView().updateSpeakerString(this.getView().getSpeakerTitles().get(nextIndex), this.getView().getSpeakerNames().get(nextIndex));
         }
     }
 }
