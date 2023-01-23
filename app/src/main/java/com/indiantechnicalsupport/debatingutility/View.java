@@ -20,6 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.text.MaskFormatter;
 
 public class View extends JFrame {
@@ -56,8 +58,16 @@ public class View extends JFrame {
     private JPanel settingsBells;
     private ArrayList<JFormattedTextField> settingsBellsTextFieldArrayList;
 
+    private JPanel settingsSpeakers;
+    private ArrayList<JTextField> settingsSpeakersTitleArrayList;
+    private ArrayList<JTextField> settingsSpeakersNameArrayList;
+    
+    private JPanel settingsSummary;
+    private JButton generateSummary;
+    private JTextArea summaryText;
 
-    public View() {
+
+    public View(int numberSpeakers) {
 
         // Create window
         super("Debating Utility");
@@ -66,7 +76,7 @@ public class View extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Setup GUI elements
-        this.initGUI();
+        this.initGUI(numberSpeakers);
 
         // Add tabbed pane to main window
         this.add(this.tabPane);
@@ -77,7 +87,7 @@ public class View extends JFrame {
 
     }
 
-    private void initGUI() {
+    private void initGUI(int numberSpeakers) {
 
         // Setup tabbed pane
         this.tabPane = new JTabbedPane();
@@ -86,7 +96,7 @@ public class View extends JFrame {
 
         // Setup panel elements
         this.initGUITimerElements();
-        this.initGUISettingsElements();
+        this.initGUISettingsElements(numberSpeakers);
 
         // Add panels to tab
         this.tabPane.addTab("Timekeeping", tabIcon, this.timerPanel, "Stopwatch and bell functions.");
@@ -96,8 +106,6 @@ public class View extends JFrame {
     }
 
     private void initGUITimerElements() {
-        // final int COLUMNS = 2;
-        // final int ROWS = 1;
 
         // Create overall JPanel for organising all components
         this.timerPanel = new JPanel(new GridBagLayout());
@@ -215,7 +223,7 @@ public class View extends JFrame {
         this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
     }
 
-    public void initGUISettingsElements() {
+    public void initGUISettingsElements(int speakerNumber) {
         // Create overall JPanel for organising all components
         this.settingsPanel = new JPanel(new GridBagLayout());
         this.settingsPanel.setName("Settings");
@@ -237,6 +245,7 @@ public class View extends JFrame {
 
         for (int i = 0; i < bellNumber; i ++) {
             this.settingsBellsTextFieldArrayList.add(new JFormattedTextField(createTimeFormatter("#:##")));
+            this.settingsBellsTextFieldArrayList.get(i).setFont(new Font("Segoe UI", Font.PLAIN, 45));
             this.settingsBells.add(this.settingsBellsTextFieldArrayList.get(i));
         }
 
@@ -247,10 +256,80 @@ public class View extends JFrame {
         settingsBellsConstraints.gridy = 0;
         settingsBellsConstraints.fill = GridBagConstraints.BOTH;
         settingsBellsConstraints.insets = new Insets(10, 10, 10, 10);
+        settingsBellsConstraints.weightx = 1.0;
         settingsBellsConstraints.weighty = 0.3;
 
+        /* 
+        ADD SPEAKER INFORMATION PANEL 
+        */
+
+        // Create JPanel for speaker fields
+        this.settingsSpeakers = new JPanel();
+        this.settingsSpeakers.setLayout(new GridLayout((speakerNumber + 1), 2));
+        this.settingsSpeakers.setBorder(BorderFactory.createTitledBorder("Speaker Details"));        
+
+        // Add static text at top
+
+        this.settingsSpeakers.add(new JLabel("Speaker Title"));
+        this.settingsSpeakers.add(new JLabel("Speaker Name"));
+        
+        // Add buttons and dynamic text
+
+        this.settingsSpeakersTitleArrayList = new ArrayList<JTextField>();
+        this.settingsSpeakersNameArrayList = new ArrayList<JTextField>();
+
+        for (int i = 0; i < speakerNumber; i ++) {
+            this.settingsSpeakersTitleArrayList.add(new JTextField());
+            this.settingsSpeakersNameArrayList.add(new JTextField());
+            this.settingsSpeakers.add(this.settingsSpeakersTitleArrayList.get(i));
+            this.settingsSpeakers.add(this.settingsSpeakersNameArrayList.get(i));
+        }
+
+        this.setDefaultSpeakerTitles();
+
+        // Add layout constraints
+        GridBagConstraints settingsSpeakersConstraints = new GridBagConstraints();
+        // Position row 1, column 0.
+        settingsSpeakersConstraints.gridx = 0;
+        settingsSpeakersConstraints.gridy = 1;
+        settingsSpeakersConstraints.fill = GridBagConstraints.BOTH;
+        settingsSpeakersConstraints.insets = new Insets(10, 10, 10, 10);
+        settingsSpeakersConstraints.weightx = 1.0;
+        settingsSpeakersConstraints.weighty = 0.5;
+
+        /*
+         * ADD SUMMARY GENERATION PANEL
+         */
+
+        // Create JPanel for display
+        this.settingsSummary = new JPanel();
+        this.settingsSummary.setLayout(new GridLayout());
+        this.settingsSummary.setBorder(BorderFactory.createTitledBorder("Summary"));
+
+        // Add buttons
+        this.generateSummary = new JButton("Generate Text Summary");
+        this.settingsSummary.add(this.generateSummary);
+        
+        // Add text area
+        this.summaryText = new JTextArea();
+        this.summaryText.setEditable(false);
+        this.settingsSummary.add(this.summaryText);
+
+        // Add Constraints for layout
+        GridBagConstraints settingsSummaryConstraints = new GridBagConstraints();
+        // Position row 0, column 1.
+        settingsSummaryConstraints.gridx = 1;
+        settingsSummaryConstraints.gridy = 0; 
+        settingsSummaryConstraints.fill = GridBagConstraints.BOTH;
+        settingsSummaryConstraints.gridheight = 2; // spans two rows
+        settingsSummaryConstraints.weightx = 0.4;
+        settingsSummaryConstraints.weighty = 0.4;
+
         // Add sub-panels to parent settings panel
-        this.settingsPanel.add(this.settingsBells);
+        this.settingsPanel.add(this.settingsBells, settingsBellsConstraints);
+        this.settingsPanel.add(this.settingsSpeakers, settingsSpeakersConstraints);
+        this.settingsPanel.add(this.settingsSummary, settingsSummaryConstraints);
+        
     }
 
     public void redrawSettingsBellTimeElements(ArrayList<Integer> bellTimes) {
@@ -347,6 +426,26 @@ public class View extends JFrame {
         return this.bellString;
     }
 
+    public ArrayList<String> getSpeakerTitles() {
+        ArrayList<String> speakerTitles = new ArrayList<String>();
+
+        for (int i = 0; i < this.settingsSpeakersTitleArrayList.size(); i ++) {
+            speakerTitles.add(this.settingsSpeakersTitleArrayList.get(i).getText());
+        }
+
+        return speakerTitles;
+    }
+
+    public ArrayList<String> getSpeakerNames() {
+        ArrayList<String> speakerNames = new ArrayList<String>();
+
+        for (int i = 0; i < this.settingsSpeakersNameArrayList.size(); i ++) {
+            speakerNames.add(this.settingsSpeakersNameArrayList.get(i).getText());
+        }
+
+        return speakerNames;
+    }
+
     public void setBellText(String bellString) {
         this.bellText.setText(bellString);
     }
@@ -362,6 +461,21 @@ public class View extends JFrame {
 
     public void setStopwatchBackground(Color color) {
         this.timerDisplay.setBackground(color);
+    }
+
+    public void setSpeakerTitles(String title, int index) {
+        this.settingsSpeakersTitleArrayList.get(index).setText(title);
+    }
+
+    public void setDefaultSpeakerTitles() {
+        this.setSpeakerTitles("1st Aff", 0);
+        this.setSpeakerTitles("1st Neg", 1);
+        this.setSpeakerTitles("2nd Aff", 2);
+        this.setSpeakerTitles("2nd Neg", 3);
+        this.setSpeakerTitles("3rd Aff", 4);
+        this.setSpeakerTitles("3rd Neg", 5);
+        this.setSpeakerTitles("4th Aff", 6);
+        this.setSpeakerTitles("4th Neg", 7);
     }
 
     public void updateBellString(ArrayList<Integer> bellIntegerList) {

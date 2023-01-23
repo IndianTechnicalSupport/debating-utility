@@ -24,9 +24,13 @@ public class Controller {
     private boolean nextSpeakerAllowed;
     private boolean prevSpeakerAllowed;
 
+    private int numberSpeakers;
+
     public Controller() {
-        this.view = new View();
-        this.model = new Model(8, this, this.view); // Default is 8 speakers
+        this.numberSpeakers = 8; // Default is 8 speakers
+
+        this.view = new View(this.numberSpeakers);
+        this.model = new Model(numberSpeakers, this, this.view); 
         this.dedicatedButtonBellRinger = new BellRinger(1); // Button rings bell once
 
         // Starting at first speaker. conditions set by default
@@ -133,6 +137,14 @@ public class Controller {
 
     public View getView() {
         return this.view;
+    }
+
+    public int getNumberSpeakers() {
+        return this.numberSpeakers;
+    }
+
+    public void setNumberSpeakers(int updatedNumber) {
+        this.numberSpeakers = updatedNumber;
     }
 
     public void setNextSpeakerAllowed(boolean allowed) {

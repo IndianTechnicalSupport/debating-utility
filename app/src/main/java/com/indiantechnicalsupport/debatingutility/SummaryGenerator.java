@@ -1,5 +1,15 @@
 package com.indiantechnicalsupport.debatingutility;
 
-public class SummaryGenerator {
+import java.util.ArrayList;
+
+public final class SummaryGenerator {
     
+    public static String getSummaryString(ArrayList<String> speakerTitles, ArrayList<String> speakerNames) {
+        String summaryString = "";
+
+        
+
+        return summaryString;
+    }
+
 }

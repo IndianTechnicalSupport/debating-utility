@@ -6,6 +6,10 @@ public class Model {
 
     private Stopwatch currentStopwatch;
     private ArrayList<Stopwatch> stopwatchList;
+    private ArrayList<String> speakerTitleArrayList;
+    private ArrayList<String> speakerNameArrayList;
+
+    private SummaryGenerator summaryGenerator;
 
     private Controller controller;
 
@@ -19,6 +23,11 @@ public class Model {
 
         this.controller = controller;
         this.currentStopwatch = this.stopwatchList.get(0);
+
+        this.speakerTitleArrayList = this.controller.getView().getSpeakerTitles();
+        this.speakerNameArrayList = this.controller.getView().getSpeakerNames();
+
+        this.summaryGenerator = new SummaryGenerator();
     }
 
     public Stopwatch getStopwatch() {
