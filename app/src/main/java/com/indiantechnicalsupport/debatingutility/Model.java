@@ -9,8 +9,6 @@ public class Model {
     private ArrayList<String> speakerTitleArrayList;
     private ArrayList<String> speakerNameArrayList;
 
-    private SummaryGenerator summaryGenerator;
-
     private Controller controller;
 
     public Model(int stopwatchNumber, Controller controller, View view) {
@@ -26,8 +24,6 @@ public class Model {
 
         this.speakerTitleArrayList = this.controller.getView().getSpeakerTitles();
         this.speakerNameArrayList = this.controller.getView().getSpeakerNames();
-
-        this.summaryGenerator = new SummaryGenerator();
     }
 
     public Stopwatch getStopwatch() {
@@ -36,6 +32,11 @@ public class Model {
 
     public ArrayList<Stopwatch> getStopwatchList() {
         return this.stopwatchList;
+    }
+
+    public void generateCogitoSummary() {
+        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.speakerNameArrayList, this.getStopwatchList(), 0, new int[]{2, 3});
+        this.controller.getView().setSummaryText(summaryString);
     }
 
     public void nextSpeaker() {
@@ -50,7 +51,11 @@ public class Model {
             // Error case
         }
 
-        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) + 1);
+        int nextIndex = this.stopwatchList.indexOf(this.currentStopwatch) + 1;
+
+        this.currentStopwatch = this.stopwatchList.get(nextIndex);
+        
+        this.controller.getView().updateSpeakerString(this.speakerTitleArrayList.get(nextIndex), this.speakerNameArrayList.get(nextIndex));;
     }
 
     public void prevSpeaker() {
@@ -64,8 +69,12 @@ public class Model {
         } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
             // Error case
         }
+
+        int prevIndex = this.stopwatchList.indexOf(this.currentStopwatch) - 1;
             
-        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) - 1);
+        this.currentStopwatch = this.stopwatchList.get(prevIndex);
+
+        this.controller.getView().updateSpeakerString(this.speakerTitleArrayList.get(prevIndex), this.speakerNameArrayList.get(prevIndex));
     }
 
     protected class Stopwatch {

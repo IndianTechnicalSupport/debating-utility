@@ -46,7 +46,7 @@ public class Controller {
         this.initSettingsFunctionality();
     }
 
-    public void initStartStopFunctionality() {
+    private void initStartStopFunctionality() {
 
         // Start Button
         this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().startStopwatch());
@@ -69,7 +69,7 @@ public class Controller {
         this.view.getResetButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JPanel().getBackground()));
     }
 
-    public void initStopwatchDisplay() {
+    private void initStopwatchDisplay() {
         final int SECOND_UPDATE_DELAY = 1000;
 
         ActionListener displayUpdate = new ActionListener() {
@@ -93,11 +93,11 @@ public class Controller {
         this.getView().getPrevSpeakerButton().addActionListener(displayUpdate);
     }
 
-    public void initBellControlsFunctionality() {
+    private void initBellControlsFunctionality() {
         this.view.getDingButton().addActionListener(e -> this.dedicatedButtonBellRinger.soundBellOnce());
     }
 
-    public void initSpeakerControlsFunctionality() {
+    private void initSpeakerControlsFunctionality() {
         // Next Speaker Button
         this.view.getNextSpeakerButton().addActionListener(e -> this.model.nextSpeaker());
         // Temp fix for colour changing
@@ -110,7 +110,7 @@ public class Controller {
         this.view.getPrevSpeakerButton().setEnabled(false); // Starts on first speaker by default
     }
 
-    public void toggleSpeakerControlButtons(boolean permitted) {
+    private void toggleSpeakerControlButtons(boolean permitted) {
         if (this.nextSpeakerAllowed) {
             this.view.getNextSpeakerButton().setEnabled(permitted);
         }
@@ -120,13 +120,16 @@ public class Controller {
         }
     }
 
-    public void initSettingsFunctionality() {
+    private void initSettingsFunctionality() {
         // Settings Tab
         this.view.getTabbedPane().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 updateBellTimes();
             }
         });
+
+        // Summary 
+        this.view.getGenerateSummaryButton().addActionListener(e -> this.model.generateCogitoSummary());
     }
 
     // Getter/Setter Functions

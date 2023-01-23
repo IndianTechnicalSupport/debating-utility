@@ -159,7 +159,7 @@ public class View extends JFrame {
         this.prevSpeaker = new JButton("Prev Speaker");
         this.speakerControls.add(this.prevSpeaker);
 
-        this.speakerText = new JLabel("P/Hlder");
+        this.speakerText = new JLabel("1st Aff"); // Assuming 1st aff by default
         this.speakerText.setHorizontalAlignment(JLabel.CENTER);
         this.speakerControls.add(this.speakerText);
 
@@ -341,18 +341,8 @@ public class View extends JFrame {
             JFormattedTextField field = new JFormattedTextField(createTimeFormatter("#:##"));
 
             Integer currentBellTime = bellTimes.get(i);
-            currentBellTime = currentBellTime / 1000;
             
-            Integer currentBellMinutes = currentBellTime / 60;
-            Integer currentBellSeconds = currentBellTime - (currentBellMinutes * 60);
-
-            String formattedTime = "";
-
-            if (currentBellSeconds < 10) { // Less than 10 seconds, need auxiliary 0
-                formattedTime = currentBellMinutes + ":0" + currentBellSeconds;
-            } else {
-                formattedTime = currentBellMinutes + ":" + currentBellSeconds;
-            }
+            String formattedTime = getFormattedTime(currentBellTime);
 
             field.setText(formattedTime);
             field.setValue(formattedTime);
@@ -363,7 +353,7 @@ public class View extends JFrame {
         }
     }
 
-    public String getFormattedTime(Integer bellTimeMillis) {
+    public static String getFormattedTime(Integer bellTimeMillis) {
         int bellTimeSeconds = bellTimeMillis / 1000;
             
         Integer currentBellMinutes = bellTimeSeconds / 60;
@@ -402,6 +392,10 @@ public class View extends JFrame {
 
     public JButton getPrevSpeakerButton() {
         return this.prevSpeaker;
+    }
+
+    public JButton getGenerateSummaryButton() {
+        return this.generateSummary;
     }
 
     public JLabel getBellText() {
@@ -495,6 +489,10 @@ public class View extends JFrame {
         this.setSpeakerTitles("4th Neg", 7);
     }
 
+    public void setSummaryText(String summaryText) {
+        this.summaryText.setText(summaryText);
+    }
+
     public void updateBellString(ArrayList<Integer> bellIntegerList) {
         this.bellString = "";
 
@@ -523,6 +521,10 @@ public class View extends JFrame {
 
             this.bellString += bellStringFragment;
         }
+    }
+
+    public void updateSpeakerString(String speakerTitle, String speakerName) {
+        this.speakerText.setText(speakerTitle + " " + speakerName);
     }
 
     protected MaskFormatter createTimeFormatter(String string) {
