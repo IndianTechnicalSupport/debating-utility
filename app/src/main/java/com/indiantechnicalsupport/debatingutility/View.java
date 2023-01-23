@@ -343,7 +343,7 @@ public class View extends JFrame {
             Integer currentBellTime = bellTimes.get(i);
             currentBellTime = currentBellTime / 1000;
             
-            Integer currentBellMinutes = currentBellTime / 60; // SHOULD FLOOR DIVIDE HOPEFULLY
+            Integer currentBellMinutes = currentBellTime / 60;
             Integer currentBellSeconds = currentBellTime - (currentBellMinutes * 60);
 
             String formattedTime = "";
@@ -361,6 +361,23 @@ public class View extends JFrame {
             
             this.settingsBellsTextFieldArrayList.add(field);
         }
+    }
+
+    public String getFormattedTime(Integer bellTimeMillis) {
+        int bellTimeSeconds = bellTimeMillis / 1000;
+            
+        Integer currentBellMinutes = bellTimeSeconds / 60;
+        Integer currentBellSeconds = bellTimeSeconds - (currentBellMinutes * 60);
+
+        String formattedTime = "";
+
+        if (currentBellSeconds < 10) { // Less than 10 seconds, need auxiliary 0
+            formattedTime = currentBellMinutes + ":0" + currentBellSeconds;
+        } else {
+            formattedTime = currentBellMinutes + ":" + currentBellSeconds;
+        }
+
+        return formattedTime;
     }
 
     public JButton getStartButton() {
