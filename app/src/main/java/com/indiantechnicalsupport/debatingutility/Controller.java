@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -24,9 +25,14 @@ public class Controller {
     private boolean nextSpeakerAllowed;
     private boolean prevSpeakerAllowed;
 
+    private int numberSpeakers;
+    private int numberCheckedCheckboxes;
+
     public Controller() {
-        this.view = new View();
-        this.model = new Model(8, this, this.view); // Default is 8 speakers
+        this.numberSpeakers = 8; // Default is 8 speakers
+
+        this.view = new View(this.numberSpeakers);
+        this.model = new Model(numberSpeakers, this, this.view); 
         this.dedicatedButtonBellRinger = new BellRinger(1); // Button rings bell once
 
         // Starting at first speaker. conditions set by default
@@ -42,7 +48,7 @@ public class Controller {
         this.initSettingsFunctionality();
     }
 
-    public void initStartStopFunctionality() {
+    private void initStartStopFunctionality() {
 
         // Start Button
         this.view.getStartButton().addActionListener(e -> this.model.getStopwatch().startStopwatch());
@@ -65,7 +71,7 @@ public class Controller {
         this.view.getResetButton().addActionListener(e -> this.view.getTimerDisplay().setBackground(new JPanel().getBackground()));
     }
 
-    public void initStopwatchDisplay() {
+    private void initStopwatchDisplay() {
         final int SECOND_UPDATE_DELAY = 1000;
 
         ActionListener displayUpdate = new ActionListener() {
@@ -89,11 +95,11 @@ public class Controller {
         this.getView().getPrevSpeakerButton().addActionListener(displayUpdate);
     }
 
-    public void initBellControlsFunctionality() {
+    private void initBellControlsFunctionality() {
         this.view.getDingButton().addActionListener(e -> this.dedicatedButtonBellRinger.soundBellOnce());
     }
 
-    public void initSpeakerControlsFunctionality() {
+    private void initSpeakerControlsFunctionality() {
         // Next Speaker Button
         this.view.getNextSpeakerButton().addActionListener(e -> this.model.nextSpeaker());
         // Temp fix for colour changing
@@ -106,7 +112,7 @@ public class Controller {
         this.view.getPrevSpeakerButton().setEnabled(false); // Starts on first speaker by default
     }
 
-    public void toggleSpeakerControlButtons(boolean permitted) {
+    private void toggleSpeakerControlButtons(boolean permitted) {
         if (this.nextSpeakerAllowed) {
             this.view.getNextSpeakerButton().setEnabled(permitted);
         }
@@ -116,13 +122,42 @@ public class Controller {
         }
     }
 
-    public void initSettingsFunctionality() {
+    private void initSettingsFunctionality() {
         // Settings Tab
         this.view.getTabbedPane().addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
-                updateBellTimes();
+                updateTabbedItems();
             }
         });
+
+        // Checkbox Behaviour
+        this.numberCheckedCheckboxes = 0;
+
+        for (int i = 0; i < this.view.getSettingsSpeakerBestArrayList().size(); i ++) {
+            this.view.getSettingsSpeakerBestArrayList().get(i).putClientProperty("controller", this);
+            this.view.getSettingsSpeakerBestArrayList().get(i).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JCheckBox source = (JCheckBox) e.getSource();
+                    
+                    if (source.isSelected() && numberCheckedCheckboxes >= 2) { // More than 2 selected, TODO update to ensure compatibility with change to number of best speakers
+                        source.setSelected(false);
+                    } else {
+                        Controller controller = (Controller) ((JCheckBox) e.getSource()).getClientProperty("controller");
+                        if (source.isSelected()) {
+                            numberCheckedCheckboxes ++;
+                            controller.getModel().updateBestSpeakers(controller.getView().getSettingsSpeakerBestArrayList().indexOf(((JCheckBox) (e.getSource()))), false);
+                        } else {
+                            numberCheckedCheckboxes --;
+                            controller.getModel().updateBestSpeakers(controller.getView().getSettingsSpeakerBestArrayList().indexOf(((JCheckBox) (e.getSource()))), true);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Summary 
+        this.view.getGenerateSummaryButton().addActionListener(e -> this.model.generateCogitoSummary());
     }
 
     // Getter/Setter Functions
@@ -135,6 +170,14 @@ public class Controller {
         return this.view;
     }
 
+    public int getNumberSpeakers() {
+        return this.numberSpeakers;
+    }
+
+    public void setNumberSpeakers(int updatedNumber) {
+        this.numberSpeakers = updatedNumber;
+    }
+
     public void setNextSpeakerAllowed(boolean allowed) {
         this.nextSpeakerAllowed = allowed;
         this.getView().getNextSpeakerButton().setEnabled(true);
@@ -145,7 +188,7 @@ public class Controller {
         this.getView().getPrevSpeakerButton().setEnabled(true);
     }
 
-    private void updateBellTimes() {
+    private void updateTabbedItems() {
         if (this.getView().getTabbedPane().getSelectedComponent().getName().equals("Settings")) { // Selected Settings, load text box
             ArrayList<Integer> bellTimes = this.getModel().getStopwatch().getBellManager().getOriginalBellTimes();
             this.view.redrawSettingsBellTimeElements(bellTimes);
@@ -159,6 +202,10 @@ public class Controller {
 
             this.view.updateBellString(updatedBellTimes);
             this.view.setBellText(this.view.getBellString());
+
+
+            int nextIndex = this.model.getStopwatchList().indexOf(this.model.getStopwatch());
+            this.getView().updateSpeakerString(this.getView().getSpeakerTitles().get(nextIndex), this.getView().getSpeakerNames().get(nextIndex));
         }
     }
 }

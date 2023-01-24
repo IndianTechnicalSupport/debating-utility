@@ -42,7 +42,7 @@ public class BellRinger implements Runnable {
             activeClip.start();
             System.out.println("Bell rung");
         } catch (IOException e) {
-            //TODO: handle exception
+            
         } catch (UnsupportedAudioFileException e) {
 
         } catch (LineUnavailableException e) {

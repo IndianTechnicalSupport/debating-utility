@@ -9,8 +9,9 @@ public class Model {
 
     private Controller controller;
 
+    private ArrayList<Integer> bestSpeakers; 
+
     public Model(int stopwatchNumber, Controller controller, View view) {
-        // this.stopwatch = new Stopwatch();
         this.stopwatchList = new ArrayList<Stopwatch>();
 
         for (int i = 0; i < stopwatchNumber; i ++) {
@@ -19,6 +20,8 @@ public class Model {
 
         this.controller = controller;
         this.currentStopwatch = this.stopwatchList.get(0);
+
+        this.bestSpeakers = new ArrayList<Integer>();
     }
 
     public Stopwatch getStopwatch() {
@@ -27,6 +30,33 @@ public class Model {
 
     public ArrayList<Stopwatch> getStopwatchList() {
         return this.stopwatchList;
+    }
+
+    public void updateBestSpeakers(Integer position, boolean remove) {
+        if (remove) {
+            if (this.bestSpeakers.contains(position)) {
+            this.bestSpeakers.remove(position);
+            } else {
+                return;
+            }
+        } else {
+            if (this.bestSpeakers.contains(position)) {
+                return;
+            } else {
+                this.bestSpeakers.add(position);
+            }
+        }
+    }
+
+    public void generateCogitoSummary() {
+        String summaryString = SummaryGenerator.getCogitoSummaryString(
+            this.controller.getView().getSummaryClassCode(), 
+            this.controller.getView().getSpeakerNames(), 
+            this.getStopwatchList(), 
+            this.controller.getView().getSummaryBestTeam(), 
+            this.bestSpeakers);
+        
+            this.controller.getView().setSummaryText(summaryString);
     }
 
     public void nextSpeaker() {
@@ -41,7 +71,11 @@ public class Model {
             // Error case
         }
 
-        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) + 1);
+        int nextIndex = this.stopwatchList.indexOf(this.currentStopwatch) + 1;
+
+        this.currentStopwatch = this.stopwatchList.get(nextIndex);
+        
+        this.controller.getView().updateSpeakerString(this.controller.getView().getSpeakerTitles().get(nextIndex), this.controller.getView().getSpeakerNames().get(nextIndex));
     }
 
     public void prevSpeaker() {
@@ -55,8 +89,12 @@ public class Model {
         } else if (this.stopwatchList.indexOf(this.currentStopwatch) == -1) {
             // Error case
         }
+
+        int prevIndex = this.stopwatchList.indexOf(this.currentStopwatch) - 1;
             
-        this.currentStopwatch = this.stopwatchList.get(this.stopwatchList.indexOf(this.currentStopwatch) - 1);
+        this.currentStopwatch = this.stopwatchList.get(prevIndex);
+
+        this.controller.getView().updateSpeakerString(this.controller.getView().getSpeakerTitles().get(prevIndex), this.controller.getView().getSpeakerNames().get(prevIndex));
     }
 
     protected class Stopwatch {
