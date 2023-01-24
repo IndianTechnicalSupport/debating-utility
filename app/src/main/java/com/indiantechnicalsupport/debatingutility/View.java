@@ -16,13 +16,17 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.text.MaskFormatter;
 
 public class View extends JFrame {
@@ -47,6 +51,7 @@ public class View extends JFrame {
 
     private String bellString;
     private JLabel bellText;
+    private JProgressBar timeProgress;
 
     private JPanel speakerControls;
     private JButton prevSpeaker;
@@ -65,6 +70,9 @@ public class View extends JFrame {
     private ArrayList<JCheckBox> settingsSpeakersBestArrayList; 
     
     private JPanel settingsSummary;
+    private JSpinner bestSpeakerNumber;
+    private JComboBox<String> bestTeamSelector;
+    private JTextField classCode;
     private JButton generateSummary;
     private JTextArea summaryText;
 
@@ -140,9 +148,9 @@ public class View extends JFrame {
 
         // Add layout constraints
         GridBagConstraints timerControlsConstraints = new GridBagConstraints();
-        // Position row 4, column 0.
+        // Position row 5, column 0.
         timerControlsConstraints.gridx = 0;
-        timerControlsConstraints.gridy = 4;
+        timerControlsConstraints.gridy = 5;
         timerControlsConstraints.fill = GridBagConstraints.BOTH;
         timerControlsConstraints.insets = new Insets(10, 10, 10, 10);
         timerControlsConstraints.weighty = 0.3;
@@ -216,13 +224,21 @@ public class View extends JFrame {
         bellTextDisplayConstraints.gridy = 3; 
         bellTextDisplayConstraints.fill = GridBagConstraints.BOTH;
 
-
+        this.timeProgress = new JProgressBar();
+        // Add Constraints for layout
+        GridBagConstraints timeProgressConstraints = new GridBagConstraints();
+        // Position row 4, column 0.
+        timeProgressConstraints.gridx = 0;
+        timeProgressConstraints.gridy = 4; 
+        timeProgressConstraints.fill = GridBagConstraints.BOTH;
+        timeProgressConstraints.insets = new Insets(20, 10, 5, 10);
 
         // Add sub-panels to parent timer panel
         this.timerPanel.add(this.timerControls, timerControlsConstraints);
         this.timerPanel.add(this.timerDisplay, timerDisplayConstraints);
         this.timerPanel.add(this.speakerControls, speakerControlsConstraints);
         this.timerPanel.add(this.bellText, bellTextDisplayConstraints);
+        this.timerPanel.add(this.timeProgress, timeProgressConstraints);
     }
 
     public void initGUISettingsElements(int speakerNumber) {
@@ -313,17 +329,51 @@ public class View extends JFrame {
 
         // Create JPanel for display
         this.settingsSummary = new JPanel();
-        this.settingsSummary.setLayout(new GridLayout());
+        this.settingsSummary.setLayout(new GridBagLayout());
         this.settingsSummary.setBorder(BorderFactory.createTitledBorder("Summary"));
+
+        // Add text at top
+        this.settingsSummary.add(new JLabel("# Best Speakers", JLabel.CENTER), new GridBagConstraints() {{ gridx = 0; gridy = 0; fill = GridBagConstraints.BOTH; }});
+        this.settingsSummary.add(new JLabel("Best Team", JLabel.CENTER), new GridBagConstraints() {{ gridx = 1; gridy = 0; fill = GridBagConstraints.BOTH; }});
+        this.settingsSummary.add(new JLabel("Class Code", JLabel.CENTER), new GridBagConstraints() {{ gridx = 2; gridy = 0; fill = GridBagConstraints.BOTH; }});
 
         // Add buttons
         this.generateSummary = new JButton("Generate Text Summary");
-        this.settingsSummary.add(this.generateSummary);
+        // Add layout constraints
+        GridBagConstraints settingsSummaryButtonConstraints = new GridBagConstraints();
+        // Position row 0, column 2.
+        settingsSummaryButtonConstraints.gridx = 0;
+        settingsSummaryButtonConstraints.gridy = 2;
+        settingsSummaryButtonConstraints.fill = GridBagConstraints.BOTH;
+        settingsSummaryButtonConstraints.gridwidth = 3; // Spans two rows
+        this.settingsSummary.add(this.generateSummary, settingsSummaryButtonConstraints);
+
+        // Add additional inputs
+
+        this.bestTeamSelector = new JComboBox<String>(new String[]{"AFF", "NEG"}) {{ maximumRowCount = 2; isEditable = false; }};
+        // Add layout constraints - Position row 1, column 1
+        this.settingsSummary.add(this.bestTeamSelector, new GridBagConstraints() {{ gridx = 1; gridy = 1; fill = GridBagConstraints.BOTH; }});
+
+        this.bestSpeakerNumber = new JSpinner(new SpinnerNumberModel(2, 0, speakerNumber, 1));
+        this.bestSpeakerNumber.setEnabled(false); // TODO temporary fix for best speaker number
+        // Add layout constraints - Position row 1, column 0.
+        this.settingsSummary.add(this.bestSpeakerNumber, new GridBagConstraints() {{ gridx = 0; gridy = 1; fill = GridBagConstraints.BOTH; }});
+
+        this.classCode = new JTextField();
+        // Add layout constraints - Position row 1, column 2.
+        this.settingsSummary.add(this.classCode, new GridBagConstraints() {{ gridx = 2; gridy = 1; fill = GridBagConstraints.BOTH; }});
         
         // Add text area
-        this.summaryText = new JTextArea();
-        this.summaryText.setEditable(false);
-        this.settingsSummary.add(this.summaryText);
+        this.summaryText = new JTextArea() {{ setEditable(false); setFont(new Font("UI Segoe", Font.PLAIN, 15)); }};
+        // Add layout constraints
+        GridBagConstraints settingsSummaryTextConstraints = new GridBagConstraints();
+        // Position row 3, column 0.
+        settingsSummaryTextConstraints.gridx = 0;
+        settingsSummaryTextConstraints.gridy = 3;
+        settingsSummaryTextConstraints.fill = GridBagConstraints.BOTH;
+        settingsSummaryTextConstraints.gridheight = 3;
+        settingsSummaryTextConstraints.gridwidth = 3;
+        this.settingsSummary.add(this.summaryText, settingsSummaryTextConstraints);
 
         // Add Constraints for layout
         GridBagConstraints settingsSummaryConstraints = new GridBagConstraints();
@@ -332,8 +382,7 @@ public class View extends JFrame {
         settingsSummaryConstraints.gridy = 0; 
         settingsSummaryConstraints.fill = GridBagConstraints.BOTH;
         settingsSummaryConstraints.gridheight = 2; // spans two rows
-        settingsSummaryConstraints.weightx = 0.4;
-        settingsSummaryConstraints.weighty = 0.4;
+
 
         // Add sub-panels to parent settings panel
         this.settingsPanel.add(this.settingsBells, settingsBellsConstraints);
@@ -422,6 +471,18 @@ public class View extends JFrame {
 
     public JTabbedPane getTabbedPane() {
         return this.tabPane;
+    }
+
+    public String getSummaryClassCode() {
+        return this.classCode.getText();
+    }
+
+    public int getSummaryBestTeam() {
+        if (this.bestTeamSelector.getSelectedItem().equals("AFF")) {
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     public ArrayList<Integer> getSettingsBellsTimes() {

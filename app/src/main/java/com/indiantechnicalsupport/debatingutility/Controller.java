@@ -140,7 +140,7 @@ public class Controller {
                 public void actionPerformed(ActionEvent e) {
                     JCheckBox source = (JCheckBox) e.getSource();
                     
-                    if (source.isSelected() && numberCheckedCheckboxes >= 2) { // More than 2 selected
+                    if (source.isSelected() && numberCheckedCheckboxes >= 2) { // More than 2 selected, TODO update to ensure compatibility with change to number of best speakers
                         source.setSelected(false);
                     } else {
                         Controller controller = (Controller) ((JCheckBox) e.getSource()).getClientProperty("controller");

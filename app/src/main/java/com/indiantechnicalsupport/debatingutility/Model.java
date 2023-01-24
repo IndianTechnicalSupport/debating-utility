@@ -49,8 +49,14 @@ public class Model {
     }
 
     public void generateCogitoSummary() {
-        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.controller.getView().getSpeakerNames(), this.getStopwatchList(), 0, this.bestSpeakers);
-        this.controller.getView().setSummaryText(summaryString);
+        String summaryString = SummaryGenerator.getCogitoSummaryString(
+            this.controller.getView().getSummaryClassCode(), 
+            this.controller.getView().getSpeakerNames(), 
+            this.getStopwatchList(), 
+            this.controller.getView().getSummaryBestTeam(), 
+            this.bestSpeakers);
+        
+            this.controller.getView().setSummaryText(summaryString);
     }
 
     public void nextSpeaker() {

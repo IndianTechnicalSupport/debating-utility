@@ -27,9 +27,9 @@ public final class SummaryGenerator {
 
         summaryString += "\nBest team: ";
 
-        if (bestTeam == 0) {
+        if (bestTeam == 1) {
             summaryString += "AFF\n";
-        } else if (bestTeam == 1) {
+        } else if (bestTeam == 0) {
             summaryString += "NEG\n";
         }
 
