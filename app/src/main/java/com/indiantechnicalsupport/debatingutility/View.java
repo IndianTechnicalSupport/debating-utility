@@ -15,6 +15,7 @@ import java.text.ParseException;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -61,6 +62,7 @@ public class View extends JFrame {
     private JPanel settingsSpeakers;
     private ArrayList<JTextField> settingsSpeakersTitleArrayList;
     private ArrayList<JTextField> settingsSpeakersNameArrayList;
+    private ArrayList<JCheckBox> settingsSpeakersBestArrayList; 
     
     private JPanel settingsSummary;
     private JButton generateSummary;
@@ -265,24 +267,32 @@ public class View extends JFrame {
 
         // Create JPanel for speaker fields
         this.settingsSpeakers = new JPanel();
-        this.settingsSpeakers.setLayout(new GridLayout((speakerNumber + 1), 2));
+        this.settingsSpeakers.setLayout(new GridLayout((speakerNumber + 1), 3)); // 3 Columns, as many rows as there are speakers
         this.settingsSpeakers.setBorder(BorderFactory.createTitledBorder("Speaker Details"));        
 
         // Add static text at top
 
-        this.settingsSpeakers.add(new JLabel("Speaker Title"));
-        this.settingsSpeakers.add(new JLabel("Speaker Name"));
+        this.settingsSpeakers.add(new JLabel("Speaker Title") {{ setHorizontalAlignment(JLabel.CENTER); }});
+        this.settingsSpeakers.add(new JLabel("Speaker Name") {{ setHorizontalAlignment(JLabel.CENTER); }});
+        this.settingsSpeakers.add(new JLabel("Best Speakers") {{ setHorizontalAlignment(JLabel.CENTER); }});
         
         // Add buttons and dynamic text
 
         this.settingsSpeakersTitleArrayList = new ArrayList<JTextField>();
         this.settingsSpeakersNameArrayList = new ArrayList<JTextField>();
+        this.settingsSpeakersBestArrayList = new ArrayList<JCheckBox>();
 
         for (int i = 0; i < speakerNumber; i ++) {
             this.settingsSpeakersTitleArrayList.add(new JTextField());
             this.settingsSpeakersNameArrayList.add(new JTextField());
+            this.settingsSpeakersBestArrayList.add(new JCheckBox() {{ 
+                setHorizontalAlignment(JCheckBox.CENTER); 
+                setRolloverEnabled(false);
+            }});
+
             this.settingsSpeakers.add(this.settingsSpeakersTitleArrayList.get(i));
             this.settingsSpeakers.add(this.settingsSpeakersNameArrayList.get(i));
+            this.settingsSpeakers.add(this.settingsSpeakersBestArrayList.get(i));
         }
 
         this.setDefaultSpeakerTitles();
@@ -435,6 +445,10 @@ public class View extends JFrame {
 
     public String getBellString() {
         return this.bellString;
+    }
+
+    public ArrayList<JCheckBox> getSettingsSpeakerBestArrayList() {
+        return this.settingsSpeakersBestArrayList;
     }
 
     public ArrayList<String> getSpeakerTitles() {

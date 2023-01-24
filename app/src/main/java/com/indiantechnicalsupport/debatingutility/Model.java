@@ -9,8 +9,9 @@ public class Model {
 
     private Controller controller;
 
+    private ArrayList<Integer> bestSpeakers; 
+
     public Model(int stopwatchNumber, Controller controller, View view) {
-        // this.stopwatch = new Stopwatch();
         this.stopwatchList = new ArrayList<Stopwatch>();
 
         for (int i = 0; i < stopwatchNumber; i ++) {
@@ -19,6 +20,8 @@ public class Model {
 
         this.controller = controller;
         this.currentStopwatch = this.stopwatchList.get(0);
+
+        this.bestSpeakers = new ArrayList<Integer>();
     }
 
     public Stopwatch getStopwatch() {
@@ -29,8 +32,24 @@ public class Model {
         return this.stopwatchList;
     }
 
+    public void updateBestSpeakers(Integer position, boolean remove) {
+        if (remove) {
+            if (this.bestSpeakers.contains(position)) {
+            this.bestSpeakers.remove(position);
+            } else {
+                return;
+            }
+        } else {
+            if (this.bestSpeakers.contains(position)) {
+                return;
+            } else {
+                this.bestSpeakers.add(position);
+            }
+        }
+    }
+
     public void generateCogitoSummary() {
-        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.controller.getView().getSpeakerNames(), this.getStopwatchList(), 0, new int[]{2, 3});
+        String summaryString = SummaryGenerator.getCogitoSummaryString(null, this.controller.getView().getSpeakerNames(), this.getStopwatchList(), 0, this.bestSpeakers);
         this.controller.getView().setSummaryText(summaryString);
     }
 

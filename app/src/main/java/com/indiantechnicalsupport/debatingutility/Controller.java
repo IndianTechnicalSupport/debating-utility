@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
+import javax.swing.JCheckBox;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -25,6 +26,7 @@ public class Controller {
     private boolean prevSpeakerAllowed;
 
     private int numberSpeakers;
+    private int numberCheckedCheckboxes;
 
     public Controller() {
         this.numberSpeakers = 8; // Default is 8 speakers
@@ -127,6 +129,32 @@ public class Controller {
                 updateTabbedItems();
             }
         });
+
+        // Checkbox Behaviour
+        this.numberCheckedCheckboxes = 0;
+
+        for (int i = 0; i < this.view.getSettingsSpeakerBestArrayList().size(); i ++) {
+            this.view.getSettingsSpeakerBestArrayList().get(i).putClientProperty("controller", this);
+            this.view.getSettingsSpeakerBestArrayList().get(i).addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    JCheckBox source = (JCheckBox) e.getSource();
+                    
+                    if (source.isSelected() && numberCheckedCheckboxes >= 2) { // More than 2 selected
+                        source.setSelected(false);
+                    } else {
+                        Controller controller = (Controller) ((JCheckBox) e.getSource()).getClientProperty("controller");
+                        if (source.isSelected()) {
+                            numberCheckedCheckboxes ++;
+                            controller.getModel().updateBestSpeakers(controller.getView().getSettingsSpeakerBestArrayList().indexOf(((JCheckBox) (e.getSource()))), false);
+                        } else {
+                            numberCheckedCheckboxes --;
+                            controller.getModel().updateBestSpeakers(controller.getView().getSettingsSpeakerBestArrayList().indexOf(((JCheckBox) (e.getSource()))), true);
+                        }
+                    }
+                }
+            });
+        }
 
         // Summary 
         this.view.getGenerateSummaryButton().addActionListener(e -> this.model.generateCogitoSummary());
